@@ -13,6 +13,7 @@ dependencies = [
     "pyarrow>=7.0.0",
     "pandas>=1.4.2",
     "tqdm>=4.64.0",
+    "notebook>=6.4.11",
 ]
 requires-python = ">=3.8"
 license = {text = "MIT"}

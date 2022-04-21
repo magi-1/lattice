@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
         data = pd.concat(dfs)
         dirname = Path(f'lattice/data/{days}_days_{resolution}_seconds/')
-        dirname.mkdir(parents=True)
+        dirname.mkdir(parents=True, exist_ok=True)
         fname = market.replace('/','_')
         fpath = dirname/(f'{fname}.parquet')
         data.to_parquet(fpath, engine='pyarrow', index=False)
