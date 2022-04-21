@@ -16,3 +16,10 @@
 ### interesting
 
 - [trading algos in rust](https://github.com/fabianboesiger)
+
+### python style
+
+```python
+from typing import List, NewType,
+ListOfDicts = NewType("ListOfDicts", List[dict])
+```
