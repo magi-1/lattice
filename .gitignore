@@ -1,3 +1,4 @@
 .pdm.toml
 __pypackages__/
 lattice/data/
+*.pyc
