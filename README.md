@@ -28,7 +28,7 @@ flowchart LR
     
     Wallet --- id1
     Market --- id2
-    Broker --- id3
+    Broker -.- id3
 ```
 
 ```mermaid
