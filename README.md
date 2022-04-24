@@ -27,11 +27,24 @@ ListOfDicts = NewType("ListOfDicts", List[dict])
 # Todos
 
 ```python
-Investor(LocalWallet, FTXMarket)
-Investor(FTXWallet, LocalMarket)
-Investor(LocalWallet, LocalMarket)
-Investor(FTXWallet, FTXMarket)
+Investor(LocalWallet, FTXMarket) # local trades
+Investor(FTXWallet, LocalMarket) # local trades
+Investor(LocalWallet, LocalMarket) # local trades
+Investor(FTXWallet, FTXMarket) # remote trades
 ```
+
+```python
+class Investor:
+    wallet: Wallet
+    market: Market
+
+    def place_order(self, order: Order):
+        # The problem lies here
+        self.market.place_order() # Fails here Investor(LocalWallet, FTXMarket)
+        self.wallet.place_order() # Doesnt make sense and fails here Investor(FTXWallet, LocalMarket)
+
+```
+
 
 # Research
 

@@ -39,8 +39,7 @@ class BernoulliInvestor(Investor):
         self.__dict__.update(kwargs)
 
     def evaluate_market(self):
-        done, prices, features = self.market.get_state()
-        print(prices)
+        done, prices, features = self.market.get_state() # asynchronous
         name = np.random.choice(list(prices.keys()))
         orders = [
             self.market.order(name, 'BUY', prices[name], 0.1),
