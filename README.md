@@ -28,9 +28,9 @@ flowchart LR
     id11[I/O]
     end
     
-    Wallet --> id1
-    Market --> id2
-    Broker --> id3
+    Wallet --- id1
+    Market --- id2
+    Broker --- id3
 ```
 
 ```mermaid
