@@ -1,51 +1,43 @@
 # lattice
 
-### Graph Based Reinforcement Learning
+## Design
+
+```mermaid
+flowchart LR
+
+    subgraph Exchange
+    id1((Wallet))
+    id2((Market))
+    id3((Broker))
+    end
+
+    subgraph Broker
+    id4[Open Orders]
+    id5[Order Constructor]
+    id6[Logger]
+    end
+    
+    subgraph Market
+    id7[Data feed]
+    id8[Memory Buffer]
+    id9[Logger]
+    end
+
+    subgraph Wallet
+    id10[Balances]
+    id11[I/O]
+    end
+    
+    Wallet --> id1
+    Market --> id2
+    Broker --> id3
+```
+
+
+### Links
 
 - SeaPearl: [arxiv](https://arxiv.org/pdf/2102.09193v1.pdf) [github](https://github.com/corail-research/SeaPearl.jl)
-
-### flax
-
 - [PPO with a great design](https://github.com/google/flax/tree/main/examples/ppo/)
-
-### notes
-
 - [upenn course](https://gnn.seas.upenn.edu/wp-content/uploads/2020/11/lecture_11_handout.pdf)
 - [TGN](https://arxiv.org/pdf/2006.10637.pdf)
-
-### interesting
-
 - [trading algos in rust](https://github.com/fabianboesiger)
-
-### python style
-
-```python
-from typing import List, NewType,
-ListOfDicts = NewType("ListOfDicts", List[dict])
-```
-
-# Todos
-
-```python
-Investor(LocalWallet, FTXMarket) # local trades
-Investor(FTXWallet, LocalMarket) # local trades
-Investor(LocalWallet, LocalMarket) # local trades
-Investor(FTXWallet, FTXMarket) # remote trades
-```
-
-```python
-class Investor:
-    wallet: Wallet
-    market: Market
-
-    def place_order(self, order: Order):
-        # The problem lies here
-        self.market.place_order() # Fails here Investor(LocalWallet, FTXMarket)
-        self.wallet.place_order() # Doesnt make sense and fails here Investor(FTXWallet, LocalMarket)
-
-```
-
-
-# Research
-
-- Have several tunable technical indicators to optimize over (later on).
