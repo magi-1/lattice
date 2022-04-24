@@ -25,14 +25,16 @@ class Market(ABC):
     - Handles the data streams / asynchronous code
     """
 
-    def __init__(self, config):
-        self.__dict__.update(config['market'])
+    #def __init__(self, config):
+    #    self.dataset = config['dataset']
 
 
 class LocalMarket(Market):
    
     def __init__(self, config) -> None:
-        super().__init__(config)
+        #super().__init__(config)
+        self.dataset = config['dataset']
+        self.assets = config['assets']
         self.data = self._load_data()
         self.T = self.data['BTC_USD'].shape[0]
         self.time = 0

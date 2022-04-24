@@ -9,29 +9,31 @@ class Order(ABC):
         side: str,
         size: float,
         open_price: float,
-        open_time: float
     ):
         self.asset = asset
         self.side = side
         self.size = size
         self.open_price = open_price
-        self.open_time = open_time
+        self.open_time = None
         self.close_time = None
         self.close_price = None
         self.profit = None
 
-    
-    def modify(self):
-        """ To do later on """
+    """
+    def stamp(self, time): Can do this later for ftx probably 
+    local time needs to be passed through but ftx doesnt, time.time()
+    """
 
-    def status(self):
-        """ To do later on """
-
+    @abstractmethod
     def cancel(self, order_id: int) -> None:
-        """ To do later on """
-    
+        pass
+
     @abstractmethod
     def place(self):
+        pass
+
+    @abstractmethod
+    def modify(self):
         pass
 
     @property
@@ -42,11 +44,38 @@ class Order(ABC):
     def value(self):
         return self.sign*self.open_price*self.size
 
-    def profit(self, current_price: float):
+    def market_delta(self, current_price: float):
         return self.sign*(current_price-self.open_price)
 
 
 class LocalOrder(Order):
+
+    def __init__(
+        self,
+        asset: str,
+        side: str,
+        size: float,
+        open_price: float,
+        open_time: float
+    ):
+        super().__init__(self, asset, side, size, open_price)
+        self.open_time = open_time
+    
+    def place(self):
+        response = {'sucess':True}
+        return response
+    
+    def cancel(self):
+        response = {'sucess':True}
+        return response
+
+    def modify(self):
+        # TODO
+        pass
+
+
+"""
+class LocalTriggerOrder(Order):
 
     def place(self):
         pass
@@ -98,4 +127,6 @@ class FTXTriggerOrder(FTXOrder):
 
     def modify(self):
         # https://docs.ftx.us/#modify-trigger-order
-        pass
+        pass  
+"""
+
