@@ -23,3 +23,16 @@
 from typing import List, NewType,
 ListOfDicts = NewType("ListOfDicts", List[dict])
 ```
+
+# Todos
+
+```python
+Investor(LocalWallet, FTXMarket)
+Investor(FTXWallet, LocalMarket)
+Investor(LocalWallet, LocalMarket)
+Investor(FTXWallet, FTXMarket)
+```
+
+# Research
+
+- Have several tunable technical indicators to optimize over (later on).

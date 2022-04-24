@@ -1,7 +1,10 @@
-from abc import ABC, abstract_method
+from abc import ABC, abstractmethod
+from lattice.investor.wallet import Wallet
+from lattice.investor.market import Market
+from lattice.investor.order import LocalOrder
+import numpy as np
 
-
-class Investor(ABC):
+class Investor:
 
     """
     Takes a (wallet, market) and places trades.
@@ -10,20 +13,41 @@ class Investor(ABC):
     for any exchange whether it be local or online.
     """
 
-    def __init__(self, wallet: Wallet=None, market: Market, **kwargs) -> None:
-        self.__dict__.update(kwargs)
+    def __init__(self, wallet: Wallet, market: Market) -> None:
+        
         self.wallet = wallet
-        self.orders = Orders()
+        self.market = market
+        self.orders = dict()
 
-    def open(self, order: Order):
-        # Operates on abstract orders
-        pass
-
-    def close(self, order: Order):
-        # Operates on abstract orders
-        pass
-
-    @abstract_method
+    def place_order(self, order: Order):
+        self.wallet.update_balance(order)
+        self.orders.setdefault(order.asset, []).append(order)
+    
+    @abstractmethod
     def evaluate_market(self):
-        # Operates on abstract markets but is customizable
         pass
+
+
+class BernoulliInvestor(Investor):
+
+    """
+    TODO: market.place_order(params) is more generic
+    """
+
+    def __init__(self, wallet: Wallet, market: Market, **kwargs) -> None:
+        super().__init__(wallet, market)
+        self.__dict__.update(kwargs)
+
+    def evaluate_market(self):
+        done, prices, features = self.market.get_state()
+        print(prices)
+        name = np.random.choice(list(prices.keys()))
+        orders = [
+            self.market.order(name, 'BUY', prices[name], 0.1),
+            Order(name, 'SELL', prices[name], 0.1)
+        ]
+        new_order = np.random.choice(orders)
+        self.place_order(new_order)
+        return done
+
+

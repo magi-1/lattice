@@ -1,33 +1,58 @@
+from abc import ABC, abstractmethod
 
 
-
-class AbstractOrder(ABC):
+class Order(ABC):
     
-    def __init__(self):
-        self.open_time = 0
-        self.close_time = 0
-        self.open_price = 0
-        self.close_price = 0
-        self.profit = 0
+    def __init__(
+        self,
+        asset: str,
+        side: str,
+        size: float,
+        open_price: float,
+        open_time: float
+    ):
+        self.asset = asset
+        self.side = side
+        self.size = size
+        self.open_price = open_price
+        self.open_time = open_time
+        self.close_time = None
+        self.close_price = None
+        self.profit = None
 
-    @abstract_method
+    
+    def modify(self):
+        """ To do later on """
+
+    def status(self):
+        """ To do later on """
+
+    def cancel(self, order_id: int) -> None:
+        """ To do later on """
+    
+    @abstractmethod
     def place(self):
         pass
 
-    @abstract_method
-    def modify(self):
+    @property
+    def sign(self):
+        return 1 if self.side == 'BUY' else -1
+
+    @property
+    def value(self):
+        return self.sign*self.open_price*self.size
+
+    def profit(self, current_price: float):
+        return self.sign*(current_price-self.open_price)
+
+
+class LocalOrder(Order):
+
+    def place(self):
         pass
 
-    @abstract_method
-    def status(self) -> dict: # vaugue
-        pass
 
-    @abstract_method
-    def cancel(self, order_id: int) -> None:
-        pass
-
-
-class FTXOrder(AbstractOrder):
+class FTXOrder(Order):
     
     def status(self):
         # https://docs.ftx.us/#get-order-status
@@ -37,11 +62,11 @@ class FTXOrder(AbstractOrder):
         # https://docs.ftx.us/#cancel-order
         pass
 
-    @abstract_method
+    @abstractmethod
     def place(self):
         pass
 
-    @abstract_method
+    @abstractmethod
     def modify(self):
         pass
 
@@ -73,19 +98,4 @@ class FTXTriggerOrder(FTXOrder):
 
     def modify(self):
         # https://docs.ftx.us/#modify-trigger-order
-        pass
-
-
-class LocalOrder(AbstractOrder):
-    
-    def status(self):
-        pass
-    
-    def cancel(self):
-        pass
-
-    def place(self):
-        pass
-
-    def modify(self):
         pass

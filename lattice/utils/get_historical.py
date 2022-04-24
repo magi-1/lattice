@@ -9,7 +9,7 @@ from pyarrow import json
 from pathlib import Path
 from dotenv import load_dotenv
 from lattice.exchanges.ftx_client import FtxClient
-import lattice.utils.paths as paths
+import lattice.paths as paths
 load_dotenv()
 
 

@@ -1,23 +1,12 @@
-from typing import List, NewType,
-from abc import ABC, abstract_method
+from typing import List, NewType
+from abc import ABC, abstractmethod
 
 
-class AbstractWallet(ABC):
-
-    def __init__(self, capital: float) -> None:
-        self.capital = capital
-
-    @abstract_method
-    def process_config(self):
-        # Converts the config into the same data structue defined by
-        # the abstract wallet so that methods can be shared.
-        pass
-
-    def calculate_something(self):
-        pass
+class Wallet(ABC):
+    pass
 
 
-class FTXWallet(AbstractWallet):
+class FTXWallet(Wallet):
     
     """
     Gets initialized with FTX wallet data.
@@ -26,23 +15,31 @@ class FTXWallet(AbstractWallet):
     def __init__(self):
         pass
 
-    def process_config(self):
+    def load_config(self):
+        pass
+
+    def get_balances(self):
+        # https://docs.ftx.us/#get-balances
         pass
 
 
-class LocalWallet(AbstractWallet):
+class LocalWallet(Wallet):
     
-    """
-    This config will allow you to partition your account
-    via proportions in [0,1] that divy up the total_assets.
-    """
-
     def __init__(self, config):
-        self.config = config
-
-    def process_config(self):
-        pass
-
-
-
-
+        self.__dict__.update(config['wallet'])
+        self.history = []
+    
+    def update_balance(self, order):
+        asset, underlying = order.asset.split('_')
+        if asset in self.balances:
+            self.balances[asset] += order.value
+        else:
+            self.balances.setdefault(asset, order.value)
+        self.balances[underlying] -= order.value
+        self.history.append(self.value)
+            
+    @property
+    def value(self):
+        usd = self.balances['USD']
+        other = sum([amt for asset,amt in self.balances.items() if asset!='USD'])
+        return usd-other
