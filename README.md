@@ -14,13 +14,11 @@ flowchart LR
     subgraph Broker
     id4[Open Orders]
     id5[Order Constructor]
-    id6[Logger]
     end
     
     subgraph Market
     id7[Data feed]
     id8[Memory Buffer]
-    id9[Logger]
     end
 
     subgraph Wallet
