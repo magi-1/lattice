@@ -33,6 +33,23 @@ flowchart LR
     Broker --> id3
 ```
 
+```mermaid
+
+flowchart LR
+
+    id1([Random Investor])
+
+    subgraph Exchange Object
+    id2([Broker])
+    id3([Wallet])
+    id4([Market])
+    end
+
+    id1-->|Orders| id2
+    id3-->|Available Assets| id1
+    id4-->|Data| id1
+    id2-->|Filled Orders| id3
+````
 
 ### Links
 
