@@ -47,6 +47,7 @@ flowchart LR
     id3-->|Available Assets| id1
     id4-->|Data| id1
     id2-->|Filled Orders| id3
+    id2---id1
 ````
 
 ### Links
