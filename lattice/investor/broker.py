@@ -3,8 +3,6 @@ from lattice.investor.order import *
 
 class Broker(ABC):
 
-    order: Order = None
-
     def __init__(self, config: dict):
         self.config = config
         self.orders = dict()
