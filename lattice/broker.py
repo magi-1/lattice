@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from lattice.order import *
 
+
 class Broker(ABC):
 
     def __init__(self, config: dict):

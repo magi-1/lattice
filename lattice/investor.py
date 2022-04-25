@@ -66,4 +66,5 @@ class BernoulliInvestor(Investor):
             )
         self.submit_orders([order])
 
-        return done
+        if not done:
+            return self.wallet.total_value

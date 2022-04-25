@@ -1,0 +1,13 @@
+market:
+    dataset: '365_days_60_seconds'
+    window: ['2022-02-01', '2022-03-01']
+    assets: ['BTC_USD']
+
+wallet:
+    balances:
+        USD: 10000
+
+broker:
+    todo: null
+
+    
