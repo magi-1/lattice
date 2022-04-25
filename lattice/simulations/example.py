@@ -4,9 +4,7 @@ from lattice.market import LocalMarket
 from lattice.wallet import LocalWallet
 from lattice.utils.io import read_config
 import lattice.paths as paths
-
 import argparse
-import yaml
 
 
 if __name__ == '__main__':
@@ -17,7 +15,6 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
 
     config = read_config(args['config'])
-    print(config)
     market = LocalMarket(config=config['market'])
     wallet = LocalWallet(config=config['wallet'])
     broker = LocalBroker(config=config['broker'])
