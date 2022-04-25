@@ -1,5 +1,6 @@
-from abc import ABC, abstractmethod
+from lattice.utils.io import broker_config
 from lattice.order import *
+from abc import ABC, abstractmethod
 
 
 class Broker(ABC):
@@ -27,7 +28,7 @@ class Broker(ABC):
     def create_order(self):
         pass
 
-
+@broker_config
 class LocalBroker(Broker):
 
     def __init__(self, config: dict):

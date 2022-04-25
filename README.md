@@ -50,6 +50,10 @@ flowchart LR
     id2-.-|Constructor| id1
 ````
 
+### Notes
+
+- [X] Decorators so that the configs can directly be injected into the objects. This enforces that the configs really are the true interface.
+
 ### Links
 
 - SeaPearl: [arxiv](https://arxiv.org/pdf/2102.09193v1.pdf) [github](https://github.com/corail-research/SeaPearl.jl)

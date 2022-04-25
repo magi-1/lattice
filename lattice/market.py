@@ -1,9 +1,13 @@
 from lattice.wallet import Wallet
+from lattice.utils.io import market_config
+import lattice.paths as paths
+
 from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
 import datetime
-import lattice.paths as paths
+import functools
+import warnings
 
 
 """
@@ -16,6 +20,7 @@ a buffer mechanism if desired so that recurrent data can be used for a given mod
 This too can be specified by config string -> constructor -> buffer initialized inside market obj.
 """
 
+
 class Market(ABC):
 
     """
@@ -26,13 +31,11 @@ class Market(ABC):
     - Handles the data streams / asynchronous code
     """
 
-
+@market_config
 class LocalMarket(Market):
    
     def __init__(self, config) -> None:
-        self.dataset = config['dataset']
-        self.assets = config['assets']
-        self.window = config['window']
+        self.__dict__.update(config)
         self.data = self._load_data()
         self.T = self.data['BTC_USD'].shape[0]
         self.time = 0

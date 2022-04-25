@@ -1,4 +1,5 @@
 from lattice.order import Order
+from lattice.utils.io import wallet_config
 from typing import List, Union, Dict
 from abc import ABC, abstractmethod
 import pandas as pd
@@ -6,7 +7,8 @@ import pandas as pd
 
 class Wallet(ABC):
 
-    def __init__(self):
+    def __init__(self, config):
+        self.__dict__.update(config)
         self.total_value = 0
         self.history = []
     
@@ -42,11 +44,11 @@ class Wallet(ABC):
         return pd.DataFrame(self.history)
 
 
+@wallet_config
 class LocalWallet(Wallet):
     
     def __init__(self, config):
-        super().__init__()
-        self.balances = config['balances']
+        super().__init__(config)
     
 
 """
