@@ -5,34 +5,31 @@ import numpy as np
 import datetime
 import lattice.paths as paths
 
+
 """
-All markets take the same kind of config then know
-how to interact with the real/synthetic market by pulling the
-data down at a given rate or only piping out a subset of tickers. 
+Think of lattice.markets as customizable datastreams that restrict
+an agent/investor to a specific subset of the market.
 
 Later on these can also take config['market']['features'] = List[str]
 and call feature classes to pipe out the data. Can also let the market have
 a buffer mechanism if desired so that recurrent data can be used for a given model.
-
-^ This also falls inline with having methods to extract and process orderbook information.
+This too can be specified by config string -> constructor -> buffer initialized inside market obj.
 """
 
 class Market(ABC):
 
     """
+    TODO: Impliment base market methods / properties
+
     - Takes as input a market config specifying either
       the whole market or a subset of the market
     - Handles the data streams / asynchronous code
     """
 
-    #def __init__(self, config):
-    #    self.dataset = config['dataset']
-
 
 class LocalMarket(Market):
    
     def __init__(self, config) -> None:
-        #super().__init__(config)
         self.dataset = config['dataset']
         self.assets = config['assets']
         self.window = config['window']
@@ -57,12 +54,14 @@ class LocalMarket(Market):
         return data
     
     def get_state(self):
+
+        """
+        Potentially have this read from sqlite db instead?
+        Having the dataframes in a dictionary is pretty slow.
+        """
         prices, features = dict(), []
         time = self.data[self.assets[0]].iloc[self.time]['time']
         for name in self.assets:
-            # TODO: Add feature class that can process
-            # lagging snapshots to have full flexiblity
-            # in terms of feature design
             x = self.data[name].iloc[self.time]
             features.append(x['log_ret'])
             prices[name] = x['close']
@@ -73,5 +72,7 @@ class LocalMarket(Market):
         self.time += 1
         return done, time, prices, np.array(features)
 
+
 class FTXMarket(Market):
+    # async code which will cause the investor polling mechanism to await
     pass
