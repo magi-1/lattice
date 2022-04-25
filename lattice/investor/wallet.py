@@ -1,5 +1,5 @@
 from lattice.investor.order import Order
-from typing import List, Union
+from typing import List, Union, Dict
 from abc import ABC, abstractmethod
 import pandas as pd
 
@@ -8,6 +8,7 @@ class Wallet(ABC):
 
     def __init__(self):
         self.total_value = 0
+        self.history = []
     
     def can_afford(self, order: Union[Order, None]):
         if order:
@@ -17,10 +18,9 @@ class Wallet(ABC):
             elif order.side == 'SELL' and asset in self.balances:
                 if order.size < self.balances[asset]:
                     return True
-            
         return False
 
-    def update_total_value(self, prices):
+    def update_total_value(self, prices: Dict[str,float]):
         usd = self.balances['USD']
         other = 0
         for asset,amount in self.balances.items():
@@ -28,14 +28,6 @@ class Wallet(ABC):
                 other += prices[asset+'_USD']*amount
         self.total_value = other + usd            
 
-
-class LocalWallet(Wallet):
-    
-    def __init__(self, config):
-        super().__init__()
-        self.balances = config['balances']
-        self.history = []
-    
     def update_balance(self, order: Order):
         asset, underlying = order.components()
         if asset in self.balances:
@@ -49,6 +41,13 @@ class LocalWallet(Wallet):
     def get_history(self):
         return pd.DataFrame(self.history)
 
+
+class LocalWallet(Wallet):
+    
+    def __init__(self, config):
+        super().__init__()
+        self.balances = config['balances']
+    
 
 """
 class FTXWallet(Wallet):
