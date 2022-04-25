@@ -10,7 +10,12 @@ from typing import List
 
 class Investor:
 
-    def __init__(self, wallet: Wallet, market: Market, broker: Broker) -> None:
+    def __init__(
+        self, 
+        wallet: Wallet, 
+        market: Market, 
+        broker: Broker
+    ) -> None:
         self.wallet = wallet
         self.market = market
         self.broker = broker
