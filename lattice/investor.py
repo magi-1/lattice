@@ -68,4 +68,3 @@ class BernoulliInvestor(Investor):
             self.submit_orders([order])
 
         return done
-       

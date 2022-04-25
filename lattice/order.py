@@ -140,4 +140,3 @@ class FTXTriggerOrder(FTXOrder):
         # https://docs.ftx.us/#modify-trigger-order
         pass  
 """
-
