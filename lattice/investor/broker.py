@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from lattice.orders import *
+from lattice.investor.order import *
 
 class Broker(ABC):
 
@@ -10,12 +10,13 @@ class Broker(ABC):
         self.orders = dict()
 
     def place_order(self, order: Order):
-        response = order.place()
-        if not response['success']:
-            self.orders.setdefault(order.id, order)
-        else:
-            print('Failed to place order!')
-        
+        if order:
+            response = order.place()
+            if response['success']:
+                self.orders.setdefault(order.id, order)
+            else:
+                print('Failed to place order!')
+            
     def cancel_order(self, order_id: str):
         response = order.cancel()
         if response['success']:
@@ -39,12 +40,14 @@ class LocalBroker(Broker):
         side: str,
         size: float,
         open_price: float,
+        open_time: float,
         otype: str = 'market'
-    ) -> LocalMarketOrder:  
-        return LocalMarketOrder(
+    ) -> LocalOrder:  
+        return LocalOrder(
             asset=asset, 
             side=side, 
             size=size,
             open_price=open_price,
+            open_time=open_time,
             otype=otype
             )

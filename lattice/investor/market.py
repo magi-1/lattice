@@ -35,6 +35,7 @@ class LocalMarket(Market):
         #super().__init__(config)
         self.dataset = config['dataset']
         self.assets = config['assets']
+        self.window = config['window']
         self.data = self._load_data()
         self.T = self.data['BTC_USD'].shape[0]
         self.time = 0
@@ -57,6 +58,7 @@ class LocalMarket(Market):
     
     def get_state(self):
         prices, features = dict(), []
+        time = self.data[self.assets[0]].iloc[self.time]['time']
         for name in self.assets:
             # TODO: Add feature class that can process
             # lagging snapshots to have full flexiblity
@@ -65,10 +67,11 @@ class LocalMarket(Market):
             features.append(x['log_ret'])
             prices[name] = x['close']
 
-        done = True
-        if self.time < self.T: done = False
-        self.time+=1
-        return done, prices, np.array(features)
+        done = False
+        if self.time >= self.T-1: 
+            done = True
+        self.time += 1
+        return done, time, prices, np.array(features)
 
 class FTXMarket(Market):
     pass

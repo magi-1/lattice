@@ -1,41 +1,54 @@
-from lattice.order import Order
-
-from typing import List, NewType
+from lattice.investor.order import Order
+from typing import List, Union
 from abc import ABC, abstractmethod
+import pandas as pd
 
 
 class Wallet(ABC):
-    
-    @property
-    def liquid_value(self):
-        """
-        NOTE: Might actually be better to store the number of coins
-              such that to get the true value at any point in time we can pass
-              in a price dictionary.
-        """
-        usd = self.balances['USD']
-        other = sum([amt for asset,amt in self.balances.items() if asset!='USD'])
-        return usd-other
 
-    def can_afford(self, order: Order):
-        pass
+    def __init__(self):
+        self.total_value = 0
+    
+    def can_afford(self, order: Union[Order, None]):
+        if order:
+            asset, underlying = order.components()
+            if order.side == 'BUY' and order.value < self.balances[underlying]:
+                    return True
+            elif order.side == 'SELL' and asset in self.balances:
+                if order.size < self.balances[asset]:
+                    return True
+            
+        return False
+
+    def update_total_value(self, prices):
+        usd = self.balances['USD']
+        other = 0
+        for asset,amount in self.balances.items():
+            if asset != 'USD':
+                other += prices[asset+'_USD']*amount
+        self.total_value = other + usd            
 
 
 class LocalWallet(Wallet):
     
     def __init__(self, config):
+        super().__init__()
         self.balances = config['balances']
         self.history = []
     
-    def update_balance(self, order):
-        asset, underlying = order.asset.split('_')
+    def update_balance(self, order: Order):
+        asset, underlying = order.components()
         if asset in self.balances:
-            self.balances[asset] += order.value
+            self.balances[asset] += order.amount
         else:
-            self.balances.setdefault(asset, order.value)
+            self.balances.setdefault(asset, order.amount)
         self.balances[underlying] -= order.value
-        self.history.append(self.value)
+        stamped_data = {**self.balances, **{'time': order.open_time}}
+        self.history.append(stamped_data)
             
+    def get_history(self):
+        return pd.DataFrame(self.history)
+
 
 """
 class FTXWallet(Wallet):

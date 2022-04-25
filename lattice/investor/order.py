@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+import uuid
 
 class Order(ABC):
     
@@ -9,11 +9,14 @@ class Order(ABC):
         side: str,
         size: float,
         open_price: float,
-    ):
+        otype: str
+    ):  
+        self.id = uuid.uuid4()
         self.asset = asset
         self.side = side
         self.size = size
         self.open_price = open_price
+        self.otype = otype
         self.open_time = None
         self.close_time = None
         self.close_price = None
@@ -43,6 +46,13 @@ class Order(ABC):
     @property
     def value(self):
         return self.sign*self.open_price*self.size
+    
+    @property
+    def amount(self):
+        return self.sign*self.size
+    
+    def components(self):
+        return self.asset.split('_')
 
     def market_delta(self, current_price: float):
         return self.sign*(current_price-self.open_price)
@@ -56,17 +66,18 @@ class LocalOrder(Order):
         side: str,
         size: float,
         open_price: float,
-        open_time: float
+        open_time: float,
+        otype: str
     ):
-        super().__init__(self, asset, side, size, open_price)
+        super().__init__(asset, side, size, open_price, otype)
         self.open_time = open_time
     
     def place(self):
-        response = {'sucess':True}
+        response = {'success':True}
         return response
     
     def cancel(self):
-        response = {'sucess':True}
+        response = {'success':True}
         return response
 
     def modify(self):

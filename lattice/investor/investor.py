@@ -1,6 +1,7 @@
-from lattice.investor.wallet import Wallet
-from lattice.investor.market import Market
-from lattice.investor.order import LocalOrder
+from lattice.investor.wallet import *
+from lattice.investor.market import *
+from lattice.investor.order import *
+from lattice.investor.broker import *
 
 from abc import ABC, abstractmethod
 import numpy as np
@@ -9,15 +10,16 @@ from typing import List
 
 class Investor:
 
-    def __init__(self, wallet: Wallet, market: Market, orders: Orders) -> None:
+    def __init__(self, wallet: Wallet, market: Market, broker: Broker) -> None:
         self.wallet = wallet
         self.market = market
-        self.orders = orders
+        self.broker = broker
 
-    def submit_orders(self, orders: List[Orders]) -> None:
+    def submit_orders(self, orders: List[Order]) -> None:
         for order in orders:
-            self.broker.place_order(order)
-            self.wallet.update_balance(order)
+            if self.wallet.can_afford(order):
+                self.broker.place_order(order)
+                self.wallet.update_balance(order)
             
     def cancel_orders(self, order_ids: List[str]) -> None:
         for oid in order_ids:
@@ -30,25 +32,35 @@ class Investor:
 
 class BernoulliInvestor(Investor):
 
-    def __init__(self, wallet: Wallet, market: Market, **kwargs) -> None:
-        super().__init__(wallet, market)
-        self.__dict__.update(kwargs)
+    def __init__(
+        self, 
+        wallet: Wallet, 
+        market: Market, 
+        broker: Broker,
+        p: list
+    ) -> None:
+        super().__init__(wallet, market, broker)
+        self.p = p
         
-    def evaluate_market(self):
+    def evaluate_market(self) -> bool:
         
         # Check state of the market
-        done, prices, features = self.market.get_state() 
+        done, time, prices, features = self.market.get_state() 
+        self.wallet.update_total_value(prices)
 
         # Select an action / make a decisions
         asset_name = np.random.choice(list(prices.keys()))
 
         # Create an order
-        order = self.broker.create_order(
-            asset=asset_name,
-            side='buy',
-            size=0.1,
-            open_price=prices[asset_name]
-            )
+        if time%720==0:
+            order = self.broker.create_order(
+                asset=asset_name,
+                side=np.random.choice(['BUY','SELL'], p = self.p),
+                size=0.01,
+                open_price=prices[asset_name],
+                open_time=time
+                )
+            self.submit_orders([order])
 
-        self.submit_orders([order])
+        return done
        
