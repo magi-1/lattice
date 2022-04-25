@@ -57,14 +57,13 @@ class BernoulliInvestor(Investor):
         asset_name = np.random.choice(list(prices.keys()))
 
         # Create an order
-        if time%720==0:
-            order = self.broker.create_order(
-                asset=asset_name,
-                side=np.random.choice(['BUY','SELL'], p = self.p),
-                size=0.01,
-                open_price=prices[asset_name],
-                open_time=time
-                )
-            self.submit_orders([order])
+        order = self.broker.create_order(
+            asset=asset_name,
+            side=np.random.choice(['BUY','SELL'], p = self.p),
+            size=0.01,
+            open_price=prices[asset_name],
+            open_time=time
+            )
+        self.submit_orders([order])
 
         return done
