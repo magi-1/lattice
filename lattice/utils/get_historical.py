@@ -20,7 +20,7 @@ MAX_CALLS = 1500
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--resolution", type=int, default=900, help="Window length in seconds"
+        "--resolution", type=int, default=60, help="Window length in seconds"
         )
     parser.add_argument(
         "--days", default=365, type=int, help="Start and end time"
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     num_chunks = int(np.ceil(num_obs/MAX_CALLS))+1
     time_bounds = np.linspace(t0, t1, num_chunks)
 
-    markets = pd.read_csv('lattice/data/markets.csv')
+    markets = pd.read_csv(paths.data/'markets.csv')
     for market in markets['name']:
         print(f'Pulling last {days} days of {market}...')
         dfs = []
@@ -53,6 +53,7 @@ if __name__ == "__main__":
                 end_time=time_bounds[i+1]
             )  
             _df = pd.DataFrame(prices)
+            _df['market'] = market
             dfs.append(_df)
 
         data = pd.concat(dfs)
