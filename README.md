@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="460" height="300" src="https://img.myloview.com/stickers/vector-of-modern-abstract-cubic-lattice-lines-black-and-white-background-layout-of-cubes-hexagons-squares-rectangles-and-different-abstract-elements-abstract-technical-3d-background-400-116187155.jpg">
+  <img width="460" height="300" src="">
 </p>
 
 # lattice
