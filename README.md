@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="250" height="250" src="https://github.com/magi-1/lattice/blob/main/images/logo.png">
+  <img width="150" height="150" src="https://github.com/magi-1/lattice/blob/main/images/logo.png">
 </p>
 
 # lattice
