@@ -1,5 +1,4 @@
 from lattice.wallet import Wallet
-from lattice.utils.io import market_config
 import lattice.paths as paths
 
 from abc import ABC, abstractmethod
@@ -31,7 +30,6 @@ class Market(ABC):
     - Handles the data streams / asynchronous code
     """
 
-@market_config
 class LocalMarket(Market):
    
     def __init__(self, config) -> None:

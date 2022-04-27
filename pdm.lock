@@ -731,6 +731,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "strictyaml"
+version = "1.6.1"
+summary = "Strict, typed YAML parser"
+dependencies = [
+    "python-dateutil>=2.6.0",
+]
+
+[[package]]
 name = "tenacity"
 version = "8.0.1"
 requires_python = ">=3.6"
@@ -813,7 +821,7 @@ summary = "Backport of pathlib-compatible object wrapper for zip files"
 
 [metadata]
 lock_version = "3.1"
-content_hash = "sha256:95e5645a211a833a89dffe6676f8fa62d1132de8ad562ccdfff923c5735545b4"
+content_hash = "sha256:a24341e65f8a90dde56b4914b0dbb4d6c32b949bd109d1aeb1b52b5abd27d7d4"
 
 [metadata.files]
 "absl-py 1.0.0" = [
@@ -1678,6 +1686,9 @@ content_hash = "sha256:95e5645a211a833a89dffe6676f8fa62d1132de8ad562ccdfff923c57
 "stack-data 0.2.0" = [
     {file = "stack_data-0.2.0-py3-none-any.whl", hash = "sha256:999762f9c3132308789affa03e9271bbbe947bf78311851f4d485d8402ed858e"},
     {file = "stack_data-0.2.0.tar.gz", hash = "sha256:45692d41bd633a9503a5195552df22b583caf16f0b27c4e58c98d88c8b648e12"},
+]
+"strictyaml 1.6.1" = [
+    {file = "strictyaml-1.6.1.tar.gz", hash = "sha256:688be16ee5d1a2f94aa4abdc6d881e8e254d173d724ac88725955fe66bdb63d4"},
 ]
 "tenacity 8.0.1" = [
     {file = "tenacity-8.0.1-py3-none-any.whl", hash = "sha256:f78f4ea81b0fabc06728c11dc2a8c01277bfc5181b321a4770471902e3eb844a"},
