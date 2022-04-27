@@ -6,7 +6,7 @@
 ### Notes
 
 - [X] Decorators so that the configs can directly be injected into the objects. This enforces that the configs really are the true interface.
-   - [ ] Rewrite yaml checker to use https://pypi.org/project/strictyaml/
+   - [X] Rewrite yaml checker to use https://pypi.org/project/strictyaml/
 - [ ] Rewrite the local orders code using pyarrow.dataset
 - [ ] Build out base memory buffer functionality into the market class. Have custom Buffer class implimentation
   - [ ] Build out baseline feature / feature set classes which Market classes should expect. These feature classes actually control the memory buffer directly that way we dont have to rewrite market classes for different datasets / asset types / strategies etc. 
