@@ -8,35 +8,51 @@ class Wallet(ABC):
 
     def __init__(self, config):
         self.__dict__.update(config)
-        self.total_value = 0
+        self.total_value = 0.01
         self.history = []
     
     def can_afford(self, order: Union[Order, None]):
         if order:
             asset, underlying = order.components()
             if order.side == 'BUY' and order.value < self.balances[underlying]:
-                    return True
+                return True
             elif order.side == 'SELL' and asset in self.balances:
                 if order.size < self.balances[asset]:
                     return True
-        return False
+        return False        
 
-    def update_total_value(self, prices: Dict[str,float]):
-        usd = self.balances['USD']
-        other = 0
-        for asset,amount in self.balances.items():
-            if asset != 'USD':
-                other += prices[asset+'_USD']*amount
-        self.total_value = other + usd            
+    def update_balance(
+        self, 
+        order: Order, 
+        prices: Dict[str,float]
+    ) -> None:
 
-    def update_balance(self, order: Order):
+        # Updating asset quantities
         asset, underlying = order.components()
         if asset in self.balances:
             self.balances[asset] += order.amount
         else:
             self.balances.setdefault(asset, order.amount)
-        self.balances[underlying] -= order.value
-        stamped_data = {**self.balances, **{'time': order.open_time}}
+        
+        # Add/deduct from underling
+        fee = 1+order.fee if order.side == 'BUY' else 1
+        self.balances[underlying] -= order.value*fee
+
+        # Getting total portfolio value
+        total_value = self.balances['USD']
+        for asset,amount in self.balances.items():
+            if asset != 'USD':
+                total_value += prices[asset+'_USD']*amount
+        self.total_value = total_value
+
+        # Logging wallet state
+        derived_data = {'total_value': total_value}
+        meta_data = {'time': order.open_time}
+        stamped_data = {
+            **meta_data,
+            **derived_data,
+            **self.balances, 
+            }
         self.history.append(stamped_data)
             
     def get_history(self):

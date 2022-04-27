@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 class Broker(ABC):
 
     def __init__(self, config: dict):
-        self.config = config
+        self.__dict__.update(config)
         self.orders = dict()
 
     def place_order(self, order: Order):
@@ -48,5 +48,6 @@ class LocalBroker(Broker):
             size=size,
             open_price=open_price,
             open_time=open_time,
-            otype=otype
+            otype=otype,
+            fee=self.fee
             )

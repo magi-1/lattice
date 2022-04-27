@@ -548,6 +548,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "polars"
+version = "0.13.25"
+requires_python = ">=3.7"
+summary = "Blazingly fast DataFrame library"
+dependencies = [
+    "numpy>=1.16.0",
+    "typing-extensions>=4.0.0; python_version < \"3.10\"",
+]
+
+[[package]]
 name = "prometheus-client"
 version = "0.14.1"
 requires_python = ">=3.6"
@@ -821,7 +831,7 @@ summary = "Backport of pathlib-compatible object wrapper for zip files"
 
 [metadata]
 lock_version = "3.1"
-content_hash = "sha256:a24341e65f8a90dde56b4914b0dbb4d6c32b949bd109d1aeb1b52b5abd27d7d4"
+content_hash = "sha256:a4c3c38c738b21d9756f3e73af012d751dc24fa36a7a9c4ef40410250279fdc3"
 
 [metadata.files]
 "absl-py 1.0.0" = [
@@ -1399,6 +1409,14 @@ content_hash = "sha256:a24341e65f8a90dde56b4914b0dbb4d6c32b949bd109d1aeb1b52b5ab
 "plotly 5.7.0" = [
     {file = "plotly-5.7.0-py2.py3-none-any.whl", hash = "sha256:3a35131762c6567813012462e1d496e1d3898f56ab3d386b32f103f7f0c79cf1"},
     {file = "plotly-5.7.0.tar.gz", hash = "sha256:15ab20e9ed8b55f669b3d35e186eb48f9e1fe07321a1337b8b7df8d3573d265a"},
+]
+"polars 0.13.25" = [
+    {file = "polars-0.13.25-cp37-abi3-macosx_10_7_x86_64.whl", hash = "sha256:c4d2185b066e418e37633f30cccc1be0811ec424db7b8087039efe4c0bce8158"},
+    {file = "polars-0.13.25-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:bd4b0acf27cafb17ab18669f9214d7a68a78972beb9bab6f1cce3c30b2e5bd18"},
+    {file = "polars-0.13.25-cp37-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:7f74692d25d1efa881df8987f40f0f90a5380b341a2bec2c9c33d691bda98b63"},
+    {file = "polars-0.13.25-cp37-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:cbfc2f30206288061ef16730fbb070a07842d167dd3b3c9cbb27a8703e4ba88c"},
+    {file = "polars-0.13.25-cp37-abi3-win_amd64.whl", hash = "sha256:bcc7a777a6477e9c87c913509adfd70d5fa89d214d7d41b52438f9b41c40ae96"},
+    {file = "polars-0.13.25.tar.gz", hash = "sha256:a1aebf4d32ddbb6165671ff1671163eeb7ea0d42d77d5b532d2886002c565096"},
 ]
 "prometheus-client 0.14.1" = [
     {file = "prometheus_client-0.14.1-py3-none-any.whl", hash = "sha256:522fded625282822a89e2773452f42df14b5a8e84a86433e3f8a189c1d54dc01"},

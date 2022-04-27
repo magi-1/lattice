@@ -7,6 +7,12 @@ import lattice.paths as paths
 import argparse
 
 
+def log_backtest(investor: Investor):
+    import lattice.utils.plotting as plot
+    history = investor.wallet.get_history()
+    history.to_csv(paths.data/'sim_out'/'wallet_history.csv',index=False)
+    plot.visualize_backtest(history, paths.data/'sim_out')
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -22,3 +28,5 @@ if __name__ == '__main__':
 
     while total_value := investor.evaluate_market():
         print(f'Total Value: ${total_value:.2f}')
+
+    log_backtest(investor)

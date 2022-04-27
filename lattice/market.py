@@ -43,7 +43,7 @@ class LocalMarket(Market):
         
     def _load_data(self):
         t0,t1 = list(map(self.to_timestamp, self.window))
-        data_dir = paths.data/self.dataset
+        data_dir = paths.data/'historical'/self.dataset
         data = dict()
         for path in data_dir.iterdir():
             asset_name = path.name.split('.')[0]

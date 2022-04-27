@@ -10,7 +10,8 @@ class Order(ABC):
         side: str,
         size: float,
         open_price: float,
-        otype: str
+        otype: str,
+        fee: float
     ):  
         self.id = uuid.uuid4()
         self.asset = asset
@@ -18,6 +19,7 @@ class Order(ABC):
         self.size = size
         self.open_price = open_price
         self.otype = otype
+        self.fee = fee
         self.open_time = None
         self.close_time = None
         self.close_price = None
@@ -68,9 +70,10 @@ class LocalOrder(Order):
         size: float,
         open_price: float,
         open_time: float,
-        otype: str
+        otype: str,
+        fee: float
     ):
-        super().__init__(asset, side, size, open_price, otype)
+        super().__init__(asset, side, size, open_price, otype, fee)
         self.open_time = open_time
     
     def place(self):

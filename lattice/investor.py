@@ -20,11 +20,15 @@ class Investor:
         self.market = market
         self.broker = broker
 
-    def submit_orders(self, orders: List[Order]) -> None:
+    def submit_orders(
+        self, 
+        orders: List[Order], 
+        prices: Dict[str,float]
+    ) -> None:
         for order in orders:
             if self.wallet.can_afford(order):
                 self.broker.place_order(order)
-                self.wallet.update_balance(order)
+                self.wallet.update_balance(order, prices)
             
     def cancel_orders(self, order_ids: List[str]) -> None:
         for oid in order_ids:
@@ -46,25 +50,29 @@ class BernoulliInvestor(Investor):
     ) -> None:
         super().__init__(wallet, market, broker)
         self.p = p
+        self.hourly_limit = int(60/5)
         
-    def evaluate_market(self) -> bool:
+    def evaluate_market(self):
         
         # Check state of the market
         done, time, prices, features = self.market.get_state() 
-        self.wallet.update_total_value(prices)
 
         # Select an action / make a decisions
         asset_name = np.random.choice(list(prices.keys()))
 
         # Create an order
-        order = self.broker.create_order(
-            asset=asset_name,
-            side=np.random.choice(['BUY','SELL'], p = self.p),
-            size=0.01,
-            open_price=prices[asset_name],
-            open_time=time
-            )
-        self.submit_orders([order])
+        if self.market.time%self.hourly_limit==0:
+            order = self.broker.create_order(
+                asset=asset_name,
+                side=np.random.choice(['BUY','SELL'], p = self.p),
+                size=0.01,
+                open_price=prices[asset_name],
+                open_time=time
+                )
+        else:
+            order = None
+        self.submit_orders([order], prices)
 
+        # Expose data 
         if not done:
             return self.wallet.total_value

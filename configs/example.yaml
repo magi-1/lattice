@@ -11,6 +11,4 @@ wallet:
         USD: 10000
 
 broker:
-    todo: null 
-
-    
+    fee: 0.0018
