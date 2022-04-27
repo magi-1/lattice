@@ -1,8 +1,17 @@
 <p align="center">
-  <img width="460" height="300" src="">
+  <img width="200" height="200" src="https://github.com/magi-1/lattice/blob/main/images/logo.png">
 </p>
 
-# lattice
+
+### Notes
+
+- [X] Decorators so that the configs can directly be injected into the objects. This enforces that the configs really are the true interface.
+   - [ ] Rewrite yaml checker to use https://pypi.org/project/strictyaml/
+- [ ] Rewrite the local orders code using pyarrow.dataset
+- [ ] Build out base memory buffer functionality into the market class. Have custom Buffer class implimentation
+  - [ ] Build out baseline feature / feature set classes which Market classes should expect. These feature classes actually control the memory buffer directly that way we dont have to rewrite market classes for different datasets / asset types / strategies etc. 
+- [ ] Make FTXOrder baseclass have api methods, _secret_sign_method() etc. Can just delete the ftx client. This is especially true because I will want to make my own so I can pull higher resolution data. Can have an FTXClient base class that all of these methods can inherit from. Replace the exchanges directory with clients. This will make it easy to write out base api functionality for a number of exchanges without having to have a monolith class. Instead the functionality can incrimentally be built out along with the repo to suit my needs. 
+
 
 
 ## Design
@@ -54,14 +63,6 @@ flowchart LR
     id2-->|Filled Orders| id3
     id2-.-|Constructor| id1
 ````
-
-### Notes
-
-- [X] Decorators so that the configs can directly be injected into the objects. This enforces that the configs really are the true interface.
-- [ ] Rewarite yaml checker to use https://pypi.org/project/strictyaml/
-- [ ] Rewrite the local orders code using pyarrow.dataset
-- [ ] Build out baseline feature / feature set classes which Market classes should expect. These feature classes actually control the memory buffer directly that way we dont have to rewrite market classes for different datasets / asset types / strategies etc. 
-- [ ] Make FTXOrder baseclass have api methods, _secret_sign_method() etc. Can just delete the ftx client. This is especially true because I will want to make my own so I can pull higher resolution data. Can have an FTXClient base class that all of these methods can inherit from. Replace the exchanges directory with clients. This will make it easy to write out base api functionality for a number of exchanges without having to have a monolith class. Instead the functionality can incrimentally be built out along with the repo to suit my needs. 
 
 ### Links
 
