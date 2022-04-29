@@ -12,7 +12,10 @@
   - [ ] Build out baseline feature / feature set classes which Market classes should expect. These feature classes actually control the memory buffer directly that way we dont have to rewrite market classes for different datasets / asset types / strategies etc. 
 - [ ] Make FTXOrder baseclass have api methods, _secret_sign_method() etc. Can just delete the ftx client. This is especially true because I will want to make my own so I can pull higher resolution data. Can have an FTXClient base class that all of these methods can inherit from. Replace the exchanges directory with clients. This will make it easy to write out base api functionality for a number of exchanges without having to have a monolith class. Instead the functionality can incrimentally be built out along with the repo to suit my needs. 
 - [ ] Remove data directories
-
+- [ ] Get the data ina structured way that is amiable to processing and addition of new feat cols.
+The feature classes are used to (precompute/rolling precompute) the features.
+These features are then converted to numpy arrays and served s.t. there is one row at a time of values
+and the keys/cols align with the asset config. During training, actions and probabilities are saved and concatted to the prexisting state data. During live trading, these are all saved at once. Abstract logging method of some sort maybe.
 
 ## Design
 
