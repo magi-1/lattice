@@ -57,7 +57,7 @@ if __name__ == "__main__":
             dfs.append(_df)
 
         data = pd.concat(dfs)
-        dirname = paths.data/f'{days}_days_{resolution}_seconds'
+        dirname = paths.data/'historical'/f'{days}_days_{resolution}_seconds'
         dirname.mkdir(parents=True, exist_ok=True)
         fname = market.replace('/','_')
         fpath = dirname/(f'{fname}.parquet')
