@@ -16,6 +16,7 @@
 The feature classes are used to (precompute/rolling precompute) the features.
 These features are then converted to numpy arrays and served s.t. there is one row at a time of values
 and the keys/cols align with the asset config. During training, actions and probabilities are saved and concatted to the prexisting state data. During live trading, these are all saved at once. Abstract logging method of some sort maybe.
+- [ ] For the market config, set "features" as a list of feature names that initializes a feature set class to be loaded into memory. '
 
 ## Design
 
