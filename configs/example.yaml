@@ -5,10 +5,8 @@ market:
         - '2022-03-01'
     assets: 
         - 'BTC_USD'
-
 wallet:
     balances:
         USD: 10000
-
 broker:
     fee: 0.0018

@@ -1,4 +1,5 @@
 .pdm.toml
 __pypackages__/
 data/
+notebooks/
 *.pyc

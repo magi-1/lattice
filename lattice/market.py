@@ -31,12 +31,17 @@ class Market(ABC):
     """
 
 class LocalMarket(Market):
+
+    """
+    make sure the market config section has as feature list
+    """
    
     def __init__(self, config) -> None:
         self.__dict__.update(config)
         self.data = self._load_data()
         self.T = self.data['BTC_USD'].shape[0]
         self.time = 0
+        print(self.assets)
         
     def to_timestamp(self, iso_time: str):
         return datetime.datetime.fromisoformat(iso_time).timestamp()*1000
