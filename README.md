@@ -18,6 +18,8 @@ and the keys/cols align with the asset config. During training, actions and prob
 - [ ] For the market config, set "features" as a list of feature names that initializes a feature set class to be loaded into memory. '
 - [ ] Make 'investor' and optional param dict in the config. This can include things like model weights and hyper parameters.
   - [ ] Investor class registry
+- [ ] resolve the ugliness of `wallet, broker, market` input style. Create a new class to wrap them in that the investor accepts as input.
+- [ ] Create a new type for the config so that the type hints make more sense.
 
 ## Design
 
