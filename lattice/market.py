@@ -62,7 +62,6 @@ class LocalMarket(Market):
                     init_bool = False
 
         big_df = pl.concat(dataframes)
-        big_df.write_parquet('name.parquet')
         prices = big_df.pivot(
             values='close', index='startTime', columns='market'
             ).drop('startTime')

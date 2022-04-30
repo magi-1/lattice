@@ -1,6 +1,6 @@
 import os
+import numpy as np
 import pandas as pd
-import numpy as numpy
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -29,5 +29,15 @@ def visualize_backtest(history: pd.DataFrame, path: os.PathLike) -> plt.Figure:
     plt.legend()
     sns.despine()
     plt.savefig(path/'asset_allocations.png')
+    plt.close()
 
+
+def plot_return_distribution(returns: list, path: os.PathLike):
+    plt.figure(figsize = (9,5))
+    sns.kdeplot(np.array(returns)*100, fill=True, linewidth=0, bw_method=0.1)
+    plt.xlabel('Return %')
+    plt.ylabel('')
+    sns.despine()
+    plt.savefig(path/'return_kde.png')
+    plt.close()
 

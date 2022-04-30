@@ -5,8 +5,8 @@ from lattice.wallet import LocalWallet
 import lattice.utils.plotting as plot
 from lattice.config import read_config
 from lattice.investor import Investor, get_investor
-
 import lattice.paths as paths
+
 import multiprocessing as mp
 import numpy as np
 import argparse
@@ -17,32 +17,7 @@ import os
 CORES = int(mp.cpu_count())
 
 
-def log_backtest(investor: Investor, batch_id=None):
-    # arg: run_id=None maybe add later if needed for RL
-    """
-    Standardize and build upon this
-    """ 
-
-    # Setting out directory
-    save_path = paths.data/'sim_out'
-    if batch_id != None:
-        save_path /= f'batch_{batch_id}'
-
-    try:
-        save_path.mkdir(parents=True, exist_ok=False)
-    except:
-        msg = "Sim data already exists. Try running 'make clear_sims'"
-        raise OSError(msg)
-
-    # Writing data
-    history = investor.wallet.get_history()
-    history.to_csv(save_path/'wallet_history.csv')
-
-    # Saving visualizations
-    plot.visualize_backtest(history, save_path)
-
-
-def run_backtest(investor: Investor, batch_id=None) -> Investor:
+def run_backtest(investor: Investor, batch_id=None) -> None:
     """
     Takes in a configured investor and executes trading scenario. 
     """
@@ -53,8 +28,32 @@ def run_backtest(investor: Investor, batch_id=None) -> Investor:
         pass
 
     # Logging data
-    log_backtest(investor, batch_id=batch_id)
-    return investor
+    log_results(investor, batch_id=batch_id)
+
+
+def log_results(investor: Investor, batch_id=None):
+    # arg: run_id=None maybe add later if needed for RL
+    """
+    Standardize and build upon this
+    """ 
+
+    # Setting out directory
+    save_path = paths.data/'sim_out'
+    if batch_id != None:
+        save_path /= f'sim_{batch_id}'
+
+    try:
+        save_path.mkdir(parents=True, exist_ok=False)
+    except:
+        msg = "Sim data already exists. Try running 'make clear_sims'"
+        raise OSError(msg)
+
+    # Writing data
+    history = investor.wallet.get_history()
+    history.to_parquet(save_path/'wallet_history.parquet', index=False)
+
+    # Saving visualizations
+    plot.visualize_backtest(history, save_path)
 
 
 if __name__ == '__main__':
@@ -86,4 +85,4 @@ if __name__ == '__main__':
         pool.join()
 
     for r in results:
-        result = r.get()
+        r.get()
