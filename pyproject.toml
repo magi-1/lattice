@@ -10,7 +10,6 @@ dependencies = [
     "flax>=0.4.1",
     "python-dotenv>=0.20.0",
     "requests>=2.27.1",
-    "pyarrow>=7.0.0",
     "pandas>=1.4.2",
     "tqdm>=4.64.0",
     "notebook>=6.4.11",
@@ -19,7 +18,6 @@ dependencies = [
     "pyyaml>=6.0",
     "strictyaml>=1.6.1",
     "polars>=0.13.25",
-    "pydantic>=1.9.0",
 ]
 requires-python = ">=3.8"
 license = {text = "MIT"}
