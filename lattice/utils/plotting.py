@@ -1,8 +1,9 @@
 import os
-import numpy as numpy
 import pandas as pd
+import numpy as numpy
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 
 def visualize_backtest(history: pd.DataFrame, path: os.PathLike) -> plt.Figure:
     # Converting to datetimes

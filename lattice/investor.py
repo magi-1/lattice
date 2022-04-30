@@ -1,11 +1,21 @@
 from lattice.wallet import *
 from lattice.market import *
-from lattice.order import *
 from lattice.broker import *
+from lattice.order import *
+from lattice.config import InvestorConfig
+
 
 from abc import ABC, abstractmethod
-import numpy as np
 from typing import List
+import numpy as np
+
+
+def get_investor(wallet, market, broker, config):
+    name = config['class']
+    for cls in Investor.__subclasses__():
+        if cls.__name__ == name:
+            return cls(wallet, market, broker, config)
+    raise ValueError(f"There is no Investor subclass called {name}")
 
 
 class Investor:
@@ -14,8 +24,10 @@ class Investor:
         self, 
         wallet: Wallet, 
         market: Market, 
-        broker: Broker
+        broker: Broker,
+        config: InvestorConfig
     ) -> None:
+        self.__dict__.update(config)
         self.wallet = wallet
         self.market = market
         self.broker = broker
@@ -41,15 +53,9 @@ class Investor:
 
 class BernoulliInvestor(Investor):
 
-    def __init__(
-        self, 
-        wallet: Wallet, 
-        market: Market, 
-        broker: Broker,
-        p: list
-    ) -> None:
-        super().__init__(wallet, market, broker)
-        self.p = p
+    # note how ugly it is to have all 3 params here, wrap these up!
+    def __init__(self, wallet, market, broker, config) -> None:
+        super().__init__(wallet, market, broker, config)
         self.hourly_limit = int(60/5)
         
     def evaluate_market(self):
@@ -58,10 +64,10 @@ class BernoulliInvestor(Investor):
         done, time, prices, features = self.market.get_state() 
 
         # Select an action / make a decisions
-        asset_name = np.random.choice(list(prices.keys()))
+        asset_name = np.random.choice(self.market.markets)
 
         # Create an order
-        if self.market.time%self.hourly_limit==0:
+        if self.market.t%self.hourly_limit==0:
             order = self.broker.create_order(
                 asset=asset_name,
                 side=np.random.choice(['BUY','SELL'], p = self.p),

@@ -1,3 +1,6 @@
+import lattice.paths as paths
+from lattice.exchanges.ftx_client import FtxClient
+
 import os
 import time
 import argparse
@@ -8,8 +11,6 @@ from tqdm import tqdm
 from pyarrow import json
 from pathlib import Path
 from dotenv import load_dotenv
-from lattice.exchanges.ftx_client import FtxClient
-import lattice.paths as paths
 load_dotenv()
 
 

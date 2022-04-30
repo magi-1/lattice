@@ -1,10 +1,12 @@
+from lattice.config import BrokerConfig
 from lattice.order import *
+
 from abc import ABC, abstractmethod
 
 
 class Broker(ABC):
 
-    def __init__(self, config: dict):
+    def __init__(self, config: BrokerConfig):
         self.__dict__.update(config)
         self.orders = dict()
 
@@ -30,7 +32,7 @@ class Broker(ABC):
 
 class LocalBroker(Broker):
 
-    def __init__(self, config: dict):
+    def __init__(self, config):
         super().__init__(config)
         
     def create_order(

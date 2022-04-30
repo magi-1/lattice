@@ -2,9 +2,15 @@ from lattice.investor import BernoulliInvestor, Investor
 from lattice.broker import LocalBroker
 from lattice.market import LocalMarket
 from lattice.wallet import LocalWallet
-from lattice.utils.io import read_config
+from lattice.config import read_config
 import lattice.paths as paths
 import argparse
+
+
+"""
+TURN THIS INTO AN EXAMPLE LIVE BOT, WITH LOCAL ORDERS BUT LIVE MARKET!!!!
+Just have a comment saying # Set as FTXOrders to place real trades!!!!
+"""
 
 
 def log_backtest(investor: Investor):

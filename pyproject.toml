@@ -19,6 +19,7 @@ dependencies = [
     "pyyaml>=6.0",
     "strictyaml>=1.6.1",
     "polars>=0.13.25",
+    "pydantic>=1.9.0",
 ]
 requires-python = ">=3.8"
 license = {text = "MIT"}

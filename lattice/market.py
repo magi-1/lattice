@@ -1,11 +1,13 @@
+from lattice.config import MarketConfig
 from lattice.wallet import Wallet
 import lattice.paths as paths
 
 from abc import ABC, abstractmethod
-import pandas as pd
+from typing import Dict
+import polars as pl
 import numpy as np
-import datetime
 import functools
+import datetime
 import warnings
 
 
@@ -22,61 +24,63 @@ This too can be specified by config string -> constructor -> buffer initialized 
 
 class Market(ABC):
 
-    """
-    TODO: Impliment base market methods / properties
+    def __init__(self, config: MarketConfig) -> None:
+        self.__dict__.update(config)
 
-    - Takes as input a market config specifying either
-      the whole market or a subset of the market
-    - Handles the data streams / asynchronous code
-    """
 
 class LocalMarket(Market):
-
-    """
-    make sure the market config section has as feature list
-    """
    
     def __init__(self, config) -> None:
-        self.__dict__.update(config)
-        self.data = self._load_data()
-        self.T = self.data['BTC_USD'].shape[0]
-        self.time = 0
-        print(self.assets)
+        super().__init__(config)
+        self.prices, self.features = self.load_data()
         
     def to_timestamp(self, iso_time: str):
         return datetime.datetime.fromisoformat(iso_time).timestamp()*1000
-        
-    def _load_data(self):
-        t0,t1 = list(map(self.to_timestamp, self.window))
-        data_dir = paths.data/'historical'/self.dataset
-        data = dict()
-        for path in data_dir.iterdir():
-            asset_name = path.name.split('.')[0]
-            if asset_name in self.assets:
-                df = pd.read_parquet(path).query('@t0 <= time < @t1')
-                # TODO: Add more features
-                df.loc[:,'log_ret'] = np.log(df.close.values) - np.log(df.close.shift(1).values)
-                data[asset_name] = df.iloc[1:]
-        return data
     
+    def compute_features(
+        self, 
+        data: Dict[str,pl.DataFrame]
+    ) -> np.ndarray:
+        return data
+
+    def load_data(self):
+        data_dir = paths.data/'historical'/self.dataset
+        t0, t1 = list(map(self.to_timestamp, self.window)) 
+        condtion = (pl.col('time') >= t0) & (pl.col('time') < t1)
+
+        dataframes = []
+        for path in data_dir.iterdir():
+            market_name = path.stem
+            if market_name in self.markets:
+                df = pl.read_parquet(path).filter(condtion)
+                df = df.with_column(pl.lit(market_name).alias("market"))
+                dataframes.append(df)
+
+                if init_bool:=True:
+                    self.timesteps = df.get_column('time').unique().sort().to_list()
+                    self.t, self.T = 0, len(self.timesteps) 
+                    init_bool = False
+
+        big_df = pl.concat(dataframes)
+        big_df.write_parquet('name.parquet')
+        prices = big_df.pivot(
+            values='close', index='startTime', columns='market'
+            ).drop('startTime')
+        self.markets = prices.columns # might be redundant
+        features = self.compute_features(big_df)
+        return prices.to_numpy(), features
+
     def get_state(self):
-
-        """
-        Potentially have this read from sqlite db instead?
-        Having the dataframes in a dictionary is pretty slow.
-        """
-        prices, features = dict(), []
-        time = self.data[self.assets[0]].iloc[self.time]['time']
-        for name in self.assets:
-            x = self.data[name].iloc[self.time]
-            features.append(x['log_ret'])
-            prices[name] = x['close']
-
+        time = self.t
+        current_prices = dict(zip(self.markets, self.prices[self.t]))
+        features = [] # self.featues[self.t]
+        
         done = False
-        if self.time >= self.T-1: 
+        if self.t >= self.T-1: 
             done = True
-        self.time += 1
-        return done, time, prices, np.array(features)
+
+        self.t += 1
+        return done, time, current_prices, features
 
 
 class FTXMarket(Market):

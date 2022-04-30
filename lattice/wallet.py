@@ -1,4 +1,6 @@
+from lattice.config import WalletConfig
 from lattice.order import Order
+
 from typing import List, Union, Dict
 from abc import ABC, abstractmethod
 import pandas as pd
@@ -6,7 +8,7 @@ import pandas as pd
 
 class Wallet(ABC):
 
-    def __init__(self, config):
+    def __init__(self, config: WalletConfig):
         self.__dict__.update(config)
         self.total_value = 0.01
         self.history = []
