@@ -1,14 +1,20 @@
+from lattice.utils.conversions import to_timestamp
 from lattice.config import MarketConfig
+from lattice.clients import FtxClient
 from lattice.wallet import Wallet
 import lattice.paths as paths
 
 from abc import ABC, abstractmethod
+from dotenv import load_dotenv
 from typing import Dict
 import polars as pl
 import numpy as np
 import functools
 import datetime
 import warnings
+import time
+import os
+load_dotenv()
 
 
 """
@@ -27,21 +33,19 @@ class Market(ABC):
     def __init__(self, config: MarketConfig) -> None:
         self.__dict__.update(config)
 
+    def compute_features(self, data: pl.DataFrame) -> np.ndarray:
+        return data
+
+    @abstractmethod
+    def get_state(self):
+        pass
+
 
 class LocalMarket(Market):
    
     def __init__(self, config) -> None:
         super().__init__(config)
         self.prices, self.features = self.load_data()
-        
-    def to_timestamp(self, iso_time: str):
-        return datetime.datetime.fromisoformat(iso_time).timestamp()*1000
-    
-    def compute_features(
-        self, 
-        data: Dict[str,pl.DataFrame]
-    ) -> np.ndarray:
-        return data
 
     def load_data(self):
         data_dir = paths.data/'historical'/self.dataset
@@ -83,5 +87,39 @@ class LocalMarket(Market):
 
 
 class FTXMarket(Market):
-    # async code which will cause the investor polling mechanism to await
-    pass
+    
+    client = FtxClient(
+        api_key=os.environ['FTX_DATA_KEY'], 
+        api_secret=os.environ['FTX_DATA_SECRET']
+    )
+
+    def __init__(self, config) -> None:
+        super().__init__(config)
+        self.dt = datetime.timedelta(hours=self.window_size).total_seconds()
+
+    def get_data(self, market: str):
+        raw_data = self.client.get_market(market)
+        return raw_data
+
+    def get_window(self, market: str) -> pl.DataFrame:
+        curr_time = int(time.time())
+        prices = self.client.get_historical_prices(
+            market=market,
+            resolution=self.resolution,
+            start_time=int(curr_time-self.dt),
+            end_time=curr_time
+        )
+        return pl.DataFrame(prices)
+
+    def get_state(self):
+        dataframes = []
+        for market in self.markets:
+            lagged_data = self.get_window(market)
+            lagged_data['market'] = market
+            dataframes.append(lagged_data)
+        big_df = pl.concat(dataframes)
+        prices = big_df.pivot(
+            values='close', index='startTime', columns='market'
+            ).drop('startTime')
+        features = self.compute_features(big_df)
+        return prices, features

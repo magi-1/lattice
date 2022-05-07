@@ -4,7 +4,6 @@ from lattice.broker import *
 from lattice.order import *
 from lattice.config import InvestorConfig
 
-
 from abc import ABC, abstractmethod
 from typing import List
 import numpy as np
@@ -39,8 +38,9 @@ class Investor:
     ) -> None:
         for order in orders:
             if self.wallet.can_afford(order):
-                self.broker.place_order(order)
-                self.wallet.update_balance(order, prices)
+                success = self.broker.place_order(order)
+                if success:
+                    self.wallet.update_balance(order, prices)
             
     def cancel_orders(self, order_ids: List[str]) -> None:
         for oid in order_ids:
@@ -53,7 +53,6 @@ class Investor:
 
 class BernoulliInvestor(Investor):
 
-    # note how ugly it is to have all 3 params here, wrap these up!
     def __init__(self, wallet, market, broker, config) -> None:
         super().__init__(wallet, market, broker, config)
         self.hourly_limit = int(60/5)
@@ -64,15 +63,15 @@ class BernoulliInvestor(Investor):
         done, time, prices, features = self.market.get_state() 
 
         # Select an action / make a decisions
-        asset_name = np.random.choice(self.market.markets)
+        market_name = np.random.choice(self.market.markets)
 
         # Create an order
         if self.market.t%self.hourly_limit==0:
-            order = self.broker.create_order(
-                asset=asset_name,
+            order = self.broker.market_order(
+                market=market_name,
                 side=np.random.choice(['BUY','SELL'], p = self.p),
                 size=0.01,
-                open_price=prices[asset_name],
+                open_price=prices[market_name],
                 open_time=time
                 )
         else:

@@ -38,6 +38,8 @@ class FtxClient:
         ts = int(time.time() * 1000)
         prepared = request.prepare()
         signature_payload = f'{ts}{prepared.method}{prepared.path_url}'.encode()
+        if prepared.body:
+            signature_payload += prepared.body
         signature = hmac.new(self._api_secret.encode(), signature_payload, 'sha256').hexdigest()
         prepared.headers[f'FTXUS-KEY'] = self._api_key
         prepared.headers[f'FTXUS-SIGN'] = signature
@@ -63,6 +65,12 @@ class FtxClient:
 
     def get_markets(self) -> List[dict]:
         return self._get('markets')
+
+    def get_market(self, market_name) -> List[dict]:
+        return self._get(f'markets/{market_name}')
+
+    def get_order_status(self, order_id):
+        return self._get('orders/{order_id}')
 
     def get_orderbook(self, market: str, depth: int = None) -> dict:
         return self._get(f'markets/{market}/orderbook', {'depth': depth})

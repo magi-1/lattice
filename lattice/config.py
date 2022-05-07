@@ -18,7 +18,7 @@ def read_config(config_name):
 
     schema = Map({
         "wallet": MapCombined({
-            "balances": MapPattern(Str(), Float()),
+            Optional("balances"): MapPattern(Str(), Float()),
             },
             Str(), 
             Any()
@@ -30,10 +30,12 @@ def read_config(config_name):
             Any()
         ),
         "market": MapCombined({
-            "dataset": Str(),
-            "window": Seq(Str()),
             "markets": Seq(Str()),
-            "features": Seq(Str())
+            "features": Seq(Str()),
+            Optional("dataset"): Str(),
+            Optional("window"): Seq(Str()),
+            Optional("resolution"): Int(),
+            Optional("window_size"): Float(),
             },
             Str(), 
             Any()

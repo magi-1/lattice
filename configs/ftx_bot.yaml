@@ -1,0 +1,21 @@
+market:
+    window_size: 3
+    resolution: 300
+    markets: 
+        - 'BTC_USD'
+        - 'ETH_BTC'
+    features:
+        - 'nothing yet'
+
+wallet:
+    subaccount: 'geezer'
+    balance: 10000
+
+broker:
+    fee: 0.0018
+
+investor:
+    class: "BernoulliInvestor"
+    p:
+        - 0.5
+        - 0.5

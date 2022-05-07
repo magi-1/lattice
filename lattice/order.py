@@ -1,24 +1,26 @@
+from lattice.clients import FtxClient
 from abc import ABC, abstractmethod
+from dotenv import load_dotenv
 import uuid
+import os
+load_dotenv()
 
 
 class Order(ABC):
     
     def __init__(
         self,
-        asset: str,
+        market: str,
         side: str,
         size: float,
         open_price: float,
-        otype: str,
-        fee: float
+        fee: float=0.0
     ):  
         self.id = uuid.uuid4()
-        self.asset = asset
+        self.market = market
         self.side = side
         self.size = size
         self.open_price = open_price
-        self.otype = otype
         self.fee = fee
         self.open_time = None
         self.close_time = None
@@ -38,10 +40,6 @@ class Order(ABC):
     def place(self):
         pass
 
-    @abstractmethod
-    def modify(self):
-        pass
-
     @property
     def sign(self):
         return 1 if self.side == 'BUY' else -1
@@ -55,83 +53,114 @@ class Order(ABC):
         return self.sign*self.size
     
     def components(self):
-        return self.asset.split('_')
+        return self.market.split('_')
 
     def market_delta(self, current_price: float):
         return self.sign*(current_price-self.open_price)
 
 
-class LocalOrder(Order):
+class LocalMarketOrder(Order):
 
     def __init__(
         self,
-        asset: str,
+        market: str,
         side: str,
         size: float,
         open_price: float,
         open_time: float,
-        otype: str,
         fee: float
     ):
-        super().__init__(asset, side, size, open_price, otype, fee)
+        super().__init__(market, side, size, open_price, fee)
         self.open_time = open_time
     
     def place(self):
-        response = {'success':True}
-        return response
+        return {'success':True}
     
     def cancel(self):
-        response = {'success':True}
-        return response
-
-    def modify(self):
-        # TODO
-        pass
+        return {'success':True}
 
 
-"""
 class LocalTriggerOrder(Order):
 
     def place(self):
-        pass
+        return {'success':True}
+    
+    def cancel(self):
+        return {'success':True}
 
 
 class FTXOrder(Order):
     
+    client = FtxClient(
+        api_key=os.environ['FTX_TRADE_KEY'], 
+        api_secret=os.environ['FTX_TRADE_SECRET']
+    )
+
+    def __init__(
+        self,
+        market: str,
+        side: str,
+        size: float,
+        open_price: float,
+    ):
+        super().__init__(market, side, size, open_price)
+
     def status(self):
-        # https://docs.ftx.us/#get-order-status
-        pass
+        return self.client.get_order_status(self.id)
     
     def cancel(self):
-        # https://docs.ftx.us/#cancel-order
-        pass
+        return self.client.cancel_order(self.id)
 
     @abstractmethod
     def place(self):
-        pass
-
-    @abstractmethod
-    def modify(self):
         pass
 
 
 class FTXMarketOrder(FTXOrder):
 
-    def place(self):
-        #https://docs.ftx.us/#place-order
-        pass
+    def __init__(
+        self,
+        market: str,
+        side: str,
+        size: float,
+    ):
+        super().__init__(market, side, size, open_price=0)
 
-    def modify(self):
-        # https://docs.ftx.us/#modify-order
-        pass
+    def place(self):
+
+        self.client.place_order(
+            market=self.market,
+            side=self.side,
+            size=self.size,
+            type='market',
+            price=None
+        )
+
+
+class FTXLimitOrder(FTXOrder):
+
+    def __init__(
+        self,
+        market: str,
+        side: str,
+        size: float,
+        open_price: float,
+    ):
+        super().__init__(market, side, size, open_price)
+
+    def place(self):
+        self.client.place_order(
+            market=self.market,
+            side=self.side,
+            price=self.open_price,
+            size=self.size,
+            type='limit'
+        )
 
 
 class FTXTriggerOrder(FTXOrder):
     
-    def status(self):
-        # https://docs.ftx.us/#get-order-status
-        pass
-    
+  
     def cancel(self):
         # https://docs.ftx.us/#cancel-order
         pass
@@ -143,4 +172,3 @@ class FTXTriggerOrder(FTXOrder):
     def modify(self):
         # https://docs.ftx.us/#modify-trigger-order
         pass  
-"""

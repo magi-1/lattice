@@ -1,9 +1,13 @@
 from lattice.config import WalletConfig
 from lattice.order import Order
+from lattice.clients import FtxClient
 
 from typing import List, Union, Dict
 from abc import ABC, abstractmethod
+from dotenv import load_dotenv
 import pandas as pd
+import os
+load_dotenv()
 
 
 class Wallet(ABC):
@@ -67,18 +71,21 @@ class LocalWallet(Wallet):
         super().__init__(config)
     
 
-"""
 class FTXWallet(Wallet):
     
-    # Gets initialized with FTX wallet data.
+    client = FtxClient(
+        api_key=os.environ['FTX_DATA_KEY'], 
+        api_secret=os.environ['FTX_DATA_SECRET']
+    )
 
-    def __init__(self):
-        pass
+    def __init__(self, config):
+        super().__init__(config)
 
-    def load_config(self):
-        pass
+        self.balances = self.pull_balances()
 
-    def get_balances(self):
-        # https://docs.ftx.us/#get-balances
-        pass
-"""
+    def pull_balances(self):
+        balances  = {}
+        for data in self.client.get_balances():
+            balances[data['coin']] = data['free']
+        return balances
+

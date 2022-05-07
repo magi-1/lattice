@@ -1,5 +1,5 @@
 import lattice.paths as paths
-from lattice.exchanges.ftx_client import FtxClient
+from lattice.clients import FtxClient
 
 import os
 import time
