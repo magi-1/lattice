@@ -12,6 +12,13 @@
 
 - [ ] Need to make local market class serve historical orderbook data as well, feature classes to operate on this.
 - [ ] Trading rate limiter as part of the investor configuration!
+- [ ] Wallet config, "balances" paramter no longer optional but creates a ftx subaccount to deploy the strategy on. This would make a subaccount and transfer money from main wallet to the sub account. The hard part with this is making everything handle sub accounts. 
+
+```yaml
+wallet:
+    subaccount: 'geezer'
+    balance: 10000
+```
 
 ## Design
 
