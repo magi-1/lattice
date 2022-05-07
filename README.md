@@ -11,6 +11,7 @@
 - [ ] resolve the ugliness of `wallet, broker, market` input style. Create a new class to wrap them in that the investor accepts as input.
 
 - [ ] Need to make local market class serve historical orderbook data as well, feature classes to operate on this.
+- [ ] Make local market get_state call get_features in a way that is contengent on the market config such that the num of lagged observations and feature classes can be called in a consistent way with what will be used during live trading.
 - [ ] Trading rate limiter as part of the investor configuration!
 - [ ] Wallet config, "balances" paramter no longer optional but creates a ftx subaccount to deploy the strategy on. This would make a subaccount and transfer money from main wallet to the sub account. The hard part with this is making everything handle sub accounts. 
 
