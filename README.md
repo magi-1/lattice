@@ -10,7 +10,8 @@
 - [ ] Make FTXOrder baseclass have api methods, _secret_sign_method() etc. Can just delete the ftx client. This is especially true because I will want to make my own so I can pull higher resolution data. Can have an FTXClient base class that all of these methods can inherit from. Replace the exchanges directory with clients. This will make it easy to write out base api functionality for a number of exchanges without having to have a monolith class. Instead the functionality can incrimentally be built out along with the repo to suit my needs. 
 - [ ] resolve the ugliness of `wallet, broker, market` input style. Create a new class to wrap them in that the investor accepts as input.
 
-- [ ] Can potentially move all of the broker base methods in the base investor, then have a generic create_order method in the investor such that it generates a new instance of the OrderClass that you pass in!
+- [ ] Need to make local market class serve historical orderbook data as well, feature classes to operate on this.
+- [ ] Trading rate limiter as part of the investor configuration!
 
 ## Design
 
