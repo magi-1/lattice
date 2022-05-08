@@ -7,12 +7,11 @@
 
 - [ ] Build out base memory buffer functionality into the market class. Have custom Buffer class implimentation
   - [ ] Build out baseline feature / feature set classes which Market classes should expect. These feature classes actually control the memory buffer directly that way we dont have to rewrite market classes for different datasets / asset types / strategies etc. 
-- [ ] Make FTXOrder baseclass have api methods, _secret_sign_method() etc. Can just delete the ftx client. This is especially true because I will want to make my own so I can pull higher resolution data. Can have an FTXClient base class that all of these methods can inherit from. Replace the exchanges directory with clients. This will make it easy to write out base api functionality for a number of exchanges without having to have a monolith class. Instead the functionality can incrimentally be built out along with the repo to suit my needs. 
-- [ ] resolve the ugliness of `wallet, broker, market` input style. Create a new class to wrap them in that the investor accepts as input.
+  - [ ] Need to make local market class serve historical orderbook data as well, feature classes to operate on this.
 
-- [ ] Need to make local market class serve historical orderbook data as well, feature classes to operate on this.
-- [ ] Make local market get_state call get_features in a way that is contengent on the market config such that the num of lagged observations and feature classes can be called in a consistent way with what will be used during live trading.
+- [ ] resolve the ugliness of `wallet, broker, market` input style. Create a new class to wrap them in that the investor accepts as input.
 - [ ] Trading rate limiter as part of the investor configuration!
+- [ ] Make local market get_state call get_features in a way that is contengent on the market config such that the num of lagged observations and feature classes can be called in a consistent way with what will be used during live trading.
 - [ ] Wallet config, "balances" paramter no longer optional but creates a ftx subaccount to deploy the strategy on. This would make a subaccount and transfer money from main wallet to the sub account. The hard part with this is making everything handle sub accounts. 
 
 ```yaml
