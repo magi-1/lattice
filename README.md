@@ -78,3 +78,4 @@ flowchart LR
 - [upenn course](https://gnn.seas.upenn.edu/wp-content/uploads/2020/11/lecture_11_handout.pdf)
 - [TGN](https://arxiv.org/pdf/2006.10637.pdf)
 - [trading algos in rust](https://github.com/fabianboesiger)
+- [Temport GNN Architectures](https://arxiv.org/pdf/2005.11650.pdf)
