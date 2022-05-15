@@ -1,16 +1,20 @@
 market:
+    dataset: '365_days_60_seconds'
     lag: 15
-    resolution: 300
+    window: 
+        - '2022-02-01'
+        - '2022-03-01'
     markets: 
         - 'BTC_USD'
-        - 'ETH_BTC'
+        
     features:
         EMA:
             alpha: 1.2
             N: 10
 
 wallet:
-    subaccount: 'geezer'
+    balances:
+        USD: 100000
 
 broker:
     fee: 0.0018
@@ -20,3 +24,5 @@ investor:
     p:
         - 0.5
         - 0.5
+
+

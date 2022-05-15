@@ -1,0 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/magi/projects/lattice'
+pdm run python /home/magi/projects/lattice/lattice/utils/get_historical.py
+make: Leaving directory '/home/magi/projects/lattice'
+ 

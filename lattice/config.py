@@ -35,7 +35,7 @@ def read_config(config_name):
             Optional("dataset"): Str(),
             Optional("window"): Seq(Str()),
             Optional("resolution"): Int(),
-            Optional("window_size"): Float(),
+            Optional("lag"): Int(),
             },
             Str(), 
             Any()

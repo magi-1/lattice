@@ -78,6 +78,9 @@ class LocalMarketOrder(Order):
     def cancel(self):
         return {'success':True}
 
+    def modify(self):
+        return {'success':True}
+
 
 class LocalTriggerOrder(Order):
 

@@ -15,6 +15,6 @@ print(feature_registry)
 
 config = read_config('my_ftx_strategy')
 market = FTXMarket(config=config['market'])
-data = market.get_data('BTC/USD')
+g = market.get_state()
 
-print(market.get_state()[1])
+print(g)

@@ -2,9 +2,9 @@
 from lattice.broker import LocalBroker
 from lattice.market import LocalMarket
 from lattice.wallet import LocalWallet
-import lattice.utils.plotting as plot
 from lattice.config import read_config
 from lattice.investor import Investor, get_investor
+import lattice.utils.plotting as plot
 import lattice.paths as paths
 
 import multiprocessing as mp
@@ -59,16 +59,15 @@ def log_results(investor: Investor, batch_id=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--config", type=str, help="Name of experiment",
+        "config", type=str, help="Name of experiment",
         )
     parser.add_argument(
-        "-n", "--num_sims", type=int, help="Number of simulatons"
+        "sims", type=int, help="Number of simulatons"
     )
     parser.add_argument(
         "-c", "--cores", type=int, default=CORES, help="Number of cores"
     )
     args = vars(parser.parse_args())
-
     config = read_config(args['config'])
     wallet = LocalWallet(config['wallet'])
     market = LocalMarket(config['market'])
@@ -77,9 +76,9 @@ if __name__ == '__main__':
     
     with mp.Pool() as pool:
         results = []
-        for i in range(args['num_sims']):
+        for i in range(args['sims']):
             results.append(
-                pool.apply_async(run_backtest, args=(investor, i))
+                pool.apply_async(run_backtest, args=(investor, i, ))
             )
         pool.close()
         pool.join()

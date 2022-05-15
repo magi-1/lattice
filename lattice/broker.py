@@ -24,6 +24,7 @@ class Broker(ABC):
                 self.orders.setdefault(order.id, order)
             else:
                 print('Failed to place order!')
+            return response['success']
             
     def cancel_order(self, order_id: str):
         response = order.cancel()
