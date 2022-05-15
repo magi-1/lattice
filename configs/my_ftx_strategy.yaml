@@ -1,15 +1,18 @@
 market:
     window_size: 3
     resolution: 300
+    ob_depth: 20
     markets: 
         - 'BTC_USD'
         - 'ETH_BTC'
     features:
-        - 'nothing yet'
+        EMA:
+            alpha: 1.2
+            N: 10
 
 wallet:
     subaccount: 'geezer'
-    balance: 10000
+    balance: 100
 
 broker:
     fee: 0.0018

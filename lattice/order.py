@@ -27,13 +27,12 @@ class Order(ABC):
         self.close_price = None
         self.profit = None
 
-    """
-    def stamp(self, time): Can do this later for ftx probably 
-    local time needs to be passed through but ftx doesnt, time.time()
-    """
-
     @abstractmethod
     def cancel(self, order_id: int) -> None:
+        pass
+
+    @abstractmethod
+    def modify(self, order_id: str, price: float, size: float):
         pass
 
     @abstractmethod
@@ -110,6 +109,14 @@ class FTXOrder(Order):
     
     def cancel(self):
         return self.client.cancel_order(self.id)
+
+    def modify(self, order_id: str, price: float, size: float):
+        self.client.modify_order(
+            existing_order_id=order_id,
+            price=price,
+            size=size
+        )
+
 
     @abstractmethod
     def place(self):

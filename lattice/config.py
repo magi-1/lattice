@@ -31,7 +31,7 @@ def read_config(config_name):
         ),
         "market": MapCombined({
             "markets": Seq(Str()),
-            "features": Seq(Str()),
+            "features": MapPattern(Str(), Any()),
             Optional("dataset"): Str(),
             Optional("window"): Seq(Str()),
             Optional("resolution"): Int(),

@@ -1,5 +1,6 @@
 from lattice.utils.conversions import to_timestamp
 from lattice.config import MarketConfig
+from lattice.features import feature_registry
 from lattice.clients import FtxClient
 from lattice.wallet import Wallet
 import lattice.paths as paths
@@ -17,24 +18,23 @@ import os
 load_dotenv()
 
 
-"""
-Think of lattice.markets as customizable datastreams that restrict
-an agent/investor to a specific subset of the market.
-
-Later on these can also take config['market']['features'] = List[str]
-and call feature classes to pipe out the data. Can also let the market have
-a buffer mechanism if desired so that recurrent data can be used for a given model.
-This too can be specified by config string -> constructor -> buffer initialized inside market obj.
-"""
-
-
 class Market(ABC):
 
     def __init__(self, config: MarketConfig) -> None:
         self.__dict__.update(config)
+        self.feature_set = self.init_features()
 
-    def compute_features(self, data: pl.DataFrame) -> np.ndarray:
-        return data
+    def init_features(self) -> None:
+        return [feature_registry[name](params) for name, params in self.features.items()]
+        
+    def compute_features(self, prices: pl.Series, volumes: pl.Series) -> np.ndarray:
+        features = [f.evaluate(prices, volumes) for f in self.feature_set]
+        return features
+
+    def pivot(self, df: pl.DataFrame, column: str) -> np.ndarray:
+        return df.pivot(
+            values=column, index='startTime', columns='market'
+            ).drop('startTime').to_numpy()
 
     @abstractmethod
     def get_state(self):
@@ -66,11 +66,10 @@ class LocalMarket(Market):
                     init_bool = False
 
         big_df = pl.concat(dataframes)
-        prices = big_df.pivot(
-            values='close', index='startTime', columns='market'
-            ).drop('startTime')
+        prices = self.pivot(big_df, 'close')
+        volumes = self.pivot(big_df, 'volume')
+        features = self.compute_features(prices, volumes)
         self.markets = prices.columns # might be redundant
-        features = self.compute_features(big_df)
         return prices.to_numpy(), features
 
     def get_state(self):
@@ -101,7 +100,7 @@ class FTXMarket(Market):
         raw_data = self.client.get_market(market)
         return raw_data
 
-    def get_window(self, market: str) -> pl.DataFrame:
+    def get_market_data(self, market: str) -> pl.DataFrame:
         curr_time = int(time.time())
         prices = self.client.get_historical_prices(
             market=market,
@@ -111,15 +110,32 @@ class FTXMarket(Market):
         )
         return pl.DataFrame(prices)
 
+    def get_orderbook_data(self, market: str):
+        if self.ob_depth:
+            data = self.client.get_orderbook(
+                market=market,
+                depth=self.ob_depth
+            )   
+            columns = ['bid_price','bid_volume','ask_price', 'ask_volume']
+            values = np.concatenate((data['bids'], data['asks']), axis=1)
+            return pl.DataFrame(values, columns=columns)
+        
     def get_state(self):
-        dataframes = []
+        mkt_dfs = []
+        #ob_dfs = []
         for market in self.markets:
-            lagged_data = self.get_window(market)
-            lagged_data['market'] = market
-            dataframes.append(lagged_data)
-        big_df = pl.concat(dataframes)
-        prices = big_df.pivot(
-            values='close', index='startTime', columns='market'
-            ).drop('startTime')
-        features = self.compute_features(big_df)
+            mkt_df = self.get_market_data(market)
+            #ob_df = self.get_orderbook_data(market)
+            market_col = pl.lit(market).alias("market")
+            mkt_df = mkt_df.with_column(market_col)
+            #ob_df = ob_df.with_column(market_col)
+            mkt_dfs.append(mkt_df)
+            #ob_dfs.append(ob_df)
+
+        big_mkt_df = pl.concat(mkt_dfs)
+        #big_ob_df = pl.concat(ob_dfs)
+        
+        prices = self.pivot(big_mkt_df, 'close')
+        volumes = self.pivot(big_mkt_df, 'volume')
+        features = self.compute_features(prices, volumes)
         return prices, features
