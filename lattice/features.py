@@ -11,10 +11,6 @@ feature_registry = {}
 
 def register(cls):
     feature_registry[cls.__name__] = cls
-    #@functools.wraps(cls)
-    #def wrapper(*args, **kwargs):
-    #    new_class = cls(*args, **kwargs)
-    #    return new_class
     return cls
 
 
