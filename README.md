@@ -3,6 +3,10 @@
 </p>
 
 
+### Setup
+
+First you must [set up pdm](https://pdm.fming.dev/) after which you can clone this repo and run `pdm install`.
+
 ### Notes
 
 - [ ] Use global ftx data stream to inform ftx us
