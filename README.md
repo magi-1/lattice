@@ -10,7 +10,7 @@
 - [ ] Fully functioning limit orders / order cancellation for the local classes.
   - [ ] These orders need to be streamed live (local) market data so they know when to execute. A investor base method that calls a status method at every evaluate_market() time step! Note this is very fast since often you wont have that many orders out at a given time. The status method for a local order will take price as input and trigger the withdrawl from wallet. If it is a live order, it will trigger a withdrawl from the local wallet, since we are emulating the ftx wallet. Good accounting!
 - [ ] Wallet config, "balances" paramter no longer optional but creates a ftx subaccount to deploy the strategy on. This would make a subaccount and transfer money from main wallet to the sub account.
-- [ ] 
+
 ```yaml
 wallet:
     subaccount: 'geezer'
