@@ -31,3 +31,8 @@ wallet:
 - [TGN](https://arxiv.org/pdf/2006.10637.pdf)
 - [Trading Algos in Rust](https://github.com/fabianboesiger)
 - [Temport GNN Architectures](https://arxiv.org/pdf/2005.11650.pdf)
+
+
+### Hypermodern
+
+- [click](https://click.palletsprojects.com/en/8.1.x/)

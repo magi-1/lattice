@@ -2,3 +2,4 @@
 __pypackages__/
 notebooks/
 *.pyc
+.vscode/

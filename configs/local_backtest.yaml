@@ -6,12 +6,13 @@ market:
         - '2022-03-01'
     markets: 
         - 'BTC_USD'
+        - 'ETH_USD'
         
     features:
         EMA:
             alpha: 1.2
             N: 10
-
+            
 wallet:
     balances:
         USD: 100000
@@ -22,7 +23,5 @@ broker:
 investor:
     class: "BernoulliInvestor"
     p:
-        - 0.5
-        - 0.5
-
-
+        - 0.6
+        - 0.4

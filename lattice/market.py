@@ -15,26 +15,30 @@ import datetime
 import warnings
 import time
 import os
+
 load_dotenv()
 
 
 class Market(ABC):
-
     def __init__(self, config: MarketConfig) -> None:
         self.__dict__.update(config)
         self.feature_set = self.init_features()
-        
+
     def init_features(self) -> None:
-        return [feature_registry[name](params) for name, params in self.features.items()]
-        
+        return [
+            feature_registry[name](params) for name, params in self.features.items()
+        ]
+
     def compute_features(self, prices: np.ndarray, volumes: np.ndarray) -> np.ndarray:
         features = [f.evaluate(prices, volumes) for f in self.feature_set]
         return features
 
     def pivot(self, df: pl.DataFrame, column: str) -> np.ndarray:
-        return df.pivot(
-            values=column, index='startTime', columns='market'
-            ).drop('startTime').to_numpy()
+        return (
+            df.pivot(values=column, index="startTime", columns="market")
+            .drop("startTime")
+            .to_numpy()
+        )
 
     @abstractmethod
     def get_state(self):
@@ -42,15 +46,14 @@ class Market(ABC):
 
 
 class LocalMarket(Market):
-   
     def __init__(self, config) -> None:
         super().__init__(config)
         self.prices, self.volumes = self.load_data()
 
     def load_data(self):
-        data_dir = paths.data/'historical'/self.dataset
-        t0, t1 = list(map(to_timestamp, self.window)) 
-        condtion = (pl.col('time') >= t0) & (pl.col('time') < t1)
+        data_dir = paths.data / "historical" / self.dataset
+        t0, t1 = list(map(to_timestamp, self.window))
+        condtion = (pl.col("time") >= t0) & (pl.col("time") < t1)
 
         mkt_dfs = []
         for path in data_dir.iterdir():
@@ -60,63 +63,59 @@ class LocalMarket(Market):
                 df = df.with_column(pl.lit(market_name).alias("market"))
                 mkt_dfs.append(df)
 
-                if init_bool:=True:
-                    self.timesteps = df.get_column('time').unique().sort().to_list()
-                    self.t, self.T = self.lag, len(self.timesteps) 
+                if init_bool := True:
+                    self.timesteps = df.get_column("time").unique().sort().to_list()
+                    self.t, self.T = self.lag, len(self.timesteps)
                     init_bool = False
 
         big_mkt_df = pl.concat(mkt_dfs)
-        prices = self.pivot(big_mkt_df, 'close')
-        volumes = self.pivot(big_mkt_df, 'volume')
+        prices = self.pivot(big_mkt_df, "close")
+        volumes = self.pivot(big_mkt_df, "volume")
         return prices, volumes
 
     def get_state(self):
         current_prices = dict(zip(self.markets, self.prices[self.t]))
-        start_index, end_index = self.t-self.lag+1, self.t+1
+        start_index, end_index = self.t - self.lag + 1, self.t + 1
 
         price_window = self.prices[start_index:end_index]
         volume_window = self.volumes[start_index:end_index]
-        
+
         features = self.compute_features(price_window, volume_window)
         # Simulation state
         done = False
-        if self.t >= self.T-1: 
+        if self.t >= self.T - 1:
             done = True
         self.t += 1
         return done, self.t, current_prices, features
 
 
 class FTXMarket(Market):
-    
+
     client = FtxClient(
-        api_key=os.environ['FTX_DATA_KEY'], 
-        api_secret=os.environ['FTX_DATA_SECRET']
+        api_key=os.environ["FTX_DATA_KEY"], api_secret=os.environ["FTX_DATA_SECRET"]
     )
 
     def __init__(self, config) -> None:
         super().__init__(config)
-        self.dt = datetime.timedelta(seconds=self.lag*self.resolution).total_seconds()
+        self.dt = datetime.timedelta(seconds=self.lag * self.resolution).total_seconds()
 
     def get_lagged_market_data(self, market: str) -> pl.DataFrame:
         curr_time = int(time.time())
         prices = self.client.get_historical_prices(
             market=market,
             resolution=self.resolution,
-            start_time=int(curr_time-self.dt),
-            end_time=curr_time
+            start_time=int(curr_time - self.dt),
+            end_time=curr_time,
         )
         return pl.DataFrame(prices)
 
     def get_orderbook_data(self, market: str):
         if self.ob_depth:
-            data = self.client.get_orderbook(
-                market=market,
-                depth=self.ob_depth
-            )   
-            columns = ['bid_price','bid_volume','ask_price', 'ask_volume']
-            values = np.concatenate((data['bids'], data['asks']), axis=1)
+            data = self.client.get_orderbook(market=market, depth=self.ob_depth)
+            columns = ["bid_price", "bid_volume", "ask_price", "ask_volume"]
+            values = np.concatenate((data["bids"], data["asks"]), axis=1)
             return pl.DataFrame(values, columns=columns)
-        
+
     def get_state(self):
         mkt_dfs, ob_dfs = [], []
         for market in self.markets:
@@ -126,8 +125,8 @@ class FTXMarket(Market):
             mkt_dfs.append(mkt_df)
 
         big_mkt_df = pl.concat(mkt_dfs)
-        prices = self.pivot(big_mkt_df, 'close')
-        volumes = self.pivot(big_mkt_df, 'volume')
+        prices = self.pivot(big_mkt_df, "close")
+        volumes = self.pivot(big_mkt_df, "volume")
         features = self.compute_features(prices, volumes)
 
         done = False

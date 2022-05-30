@@ -3,19 +3,14 @@ from abc import ABC, abstractmethod
 from dotenv import load_dotenv
 import uuid
 import os
+
 load_dotenv()
 
 
 class Order(ABC):
-    
     def __init__(
-        self,
-        market: str,
-        side: str,
-        size: float,
-        open_price: float,
-        fee: float=0.0
-    ):  
+        self, market: str, side: str, size: float, open_price: float, fee: float = 0.0
+    ):
         self.id = uuid.uuid4()
         self.market = market
         self.side = side
@@ -41,25 +36,24 @@ class Order(ABC):
 
     @property
     def sign(self):
-        return 1 if self.side == 'BUY' else -1
+        return 1 if self.side == "BUY" else -1
 
     @property
     def value(self):
-        return self.sign*self.open_price*self.size
-    
+        return self.sign * self.open_price * self.size
+
     @property
     def amount(self):
-        return self.sign*self.size
-    
+        return self.sign * self.size
+
     def components(self):
-        return self.market.split('_')
+        return self.market.split("_")
 
     def market_delta(self, current_price: float):
-        return self.sign*(current_price-self.open_price)
+        return self.sign * (current_price - self.open_price)
 
 
 class LocalMarketOrder(Order):
-
     def __init__(
         self,
         market: str,
@@ -67,35 +61,33 @@ class LocalMarketOrder(Order):
         size: float,
         open_price: float,
         open_time: float,
-        fee: float
+        fee: float,
     ):
         super().__init__(market, side, size, open_price, fee)
         self.open_time = open_time
-    
+
     def place(self):
-        return {'success':True}
-    
+        return {"success": True}
+
     def cancel(self):
-        return {'success':True}
+        return {"success": True}
 
     def modify(self):
-        return {'success':True}
+        return {"success": True}
 
 
 class LocalTriggerOrder(Order):
-
     def place(self):
-        return {'success':True}
-    
+        return {"success": True}
+
     def cancel(self):
-        return {'success':True}
+        return {"success": True}
 
 
 class FTXOrder(Order):
-    
+
     client = FtxClient(
-        api_key=os.environ['FTX_TRADE_KEY'], 
-        api_secret=os.environ['FTX_TRADE_SECRET']
+        api_key=os.environ["FTX_TRADE_KEY"], api_secret=os.environ["FTX_TRADE_SECRET"]
     )
 
     def __init__(
@@ -109,17 +101,12 @@ class FTXOrder(Order):
 
     def status(self):
         return self.client.get_order_status(self.id)
-    
+
     def cancel(self):
         return self.client.cancel_order(self.id)
 
     def modify(self, order_id: str, price: float, size: float):
-        self.client.modify_order(
-            existing_order_id=order_id,
-            price=price,
-            size=size
-        )
-
+        self.client.modify_order(existing_order_id=order_id, price=price, size=size)
 
     @abstractmethod
     def place(self):
@@ -127,7 +114,6 @@ class FTXOrder(Order):
 
 
 class FTXMarketOrder(FTXOrder):
-
     def __init__(
         self,
         market: str,
@@ -142,13 +128,12 @@ class FTXMarketOrder(FTXOrder):
             market=self.market,
             side=self.side,
             size=self.size,
-            type='market',
-            price=None
+            type="market",
+            price=None,
         )
 
 
 class FTXLimitOrder(FTXOrder):
-
     def __init__(
         self,
         market: str,
@@ -164,13 +149,11 @@ class FTXLimitOrder(FTXOrder):
             side=self.side,
             price=self.open_price,
             size=self.size,
-            type='limit'
+            type="limit",
         )
 
 
 class FTXTriggerOrder(FTXOrder):
-    
-  
     def cancel(self):
         # https://docs.ftx.us/#cancel-order
         pass
@@ -181,4 +164,4 @@ class FTXTriggerOrder(FTXOrder):
 
     def modify(self):
         # https://docs.ftx.us/#modify-trigger-order
-        pass  
+        pass

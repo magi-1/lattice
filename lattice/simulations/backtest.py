@@ -1,4 +1,3 @@
-
 from lattice.broker import LocalBroker
 from lattice.market import LocalMarket
 from lattice.wallet import LocalWallet
@@ -19,7 +18,7 @@ CORES = int(mp.cpu_count())
 
 def run_backtest(investor: Investor, batch_id=None) -> None:
     """
-    Takes in a configured investor and executes trading scenario. 
+    Takes in a configured investor and executes trading scenario.
     """
     np.random.seed(os.getpid())
 
@@ -35,12 +34,12 @@ def log_results(investor: Investor, batch_id=None):
     # arg: run_id=None maybe add later if needed for RL
     """
     Standardize and build upon this
-    """ 
+    """
 
     # Setting out directory
-    save_path = paths.data/'sim_out'
+    save_path = paths.data / "sim_out"
     if batch_id != None:
-        save_path /= f'sim_{batch_id}'
+        save_path /= f"sim_{batch_id}"
 
     try:
         save_path.mkdir(parents=True, exist_ok=False)
@@ -50,35 +49,41 @@ def log_results(investor: Investor, batch_id=None):
 
     # Writing data
     history = investor.wallet.get_history()
-    history.to_parquet(save_path/'wallet_history.parquet', index=False)
+    history.to_parquet(save_path / "wallet_history.parquet", index=False)
 
     # Saving visualizations
     plot.visualize_backtest(history, save_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "config", type=str, help="Name of experiment",
-        )
-    parser.add_argument(
-        "sims", type=int, help="Number of simulatons"
+        "config",
+        type=str,
+        help="Name of experiment",
     )
+    parser.add_argument("sims", type=int, help="Number of simulatons")
     parser.add_argument(
         "-c", "--cores", type=int, default=CORES, help="Number of cores"
     )
     args = vars(parser.parse_args())
-    config = read_config(args['config'])
-    wallet = LocalWallet(config['wallet'])
-    market = LocalMarket(config['market'])
-    broker = LocalBroker(config['broker'])
-    investor = get_investor(wallet, market, broker, config['investor'])
-    
+    config = read_config(args["config"])
+    wallet = LocalWallet(config["wallet"])
+    market = LocalMarket(config["market"])
+    broker = LocalBroker(config["broker"])
+    investor = get_investor(wallet, market, broker, config["investor"])
+
     with mp.Pool() as pool:
         results = []
-        for i in range(args['sims']):
+        for i in range(args["sims"]):
             results.append(
-                pool.apply_async(run_backtest, args=(investor, i, ))
+                pool.apply_async(
+                    run_backtest,
+                    args=(
+                        investor,
+                        i,
+                    ),
+                )
             )
         pool.close()
         pool.join()

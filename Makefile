@@ -7,8 +7,8 @@ clear_sims:
 	@rm -rf $(CURDIR)/data/sim_out
 	@rm -rf $(CURDIR)/data/report
 
-backtest:
-	@pdm run python lattice/simulations/backtest.py $(CONFIG) -n $(SIMS)
+backtest: clear_sims
+	@pdm run python lattice/simulations/backtest.py $(CONFIG) $(SIMS)
 
 report:
 	@pdm run python $(CURDIR)/lattice/utils/report.py
