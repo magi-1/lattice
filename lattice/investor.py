@@ -75,14 +75,7 @@ class BernoulliInvestor(Investor):
 
 """class AgentInvestor(Investor):
     
-    """
-    Design Notes:
-        - Wallet features := Global Features
-        - GNN with temporal node features... but not a TGN
     
-    Model Notes:
-        - 
-    """
 
     def __init__(self, wallet, market, broker, config) -> None:
         super().__init__(wallet, market, broker, config)
@@ -125,4 +118,5 @@ class BernoulliInvestor(Investor):
         # Expose data (needs to be SAR data for RL purposes later down the line :D)
         if not done:
             # need to return all the features, actions, and total wallet value!!
-            return self.wallet.total_value"""
+            return self.wallet.total_value
+"""

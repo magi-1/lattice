@@ -1,6 +1,6 @@
 import nox
 
-locations = "lattice", "tests", "noxfile.py"
+locations = "lattice", "noxfile.py"
 
 
 @nox.session(python="3.8")

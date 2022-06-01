@@ -1,6 +1,6 @@
 import functools
 import numpy as np
-from typing import NewType
+from typing import NewType, TypeVar
 
 
 """
@@ -16,9 +16,11 @@ def register(cls):
 
 
 """
-Custom hyperparameter types
+Custom feature and hyperparameter types
 """
 
+NodeFeature = TypeVar("NodeFeature")
+EdgeFeature = TypeVar("EdgeFeature")
 PositiveScalar = NewType("PositiveScalar", float)
 
 
@@ -49,7 +51,7 @@ Market features
 
 
 @register
-class EMA(MarketFeature):
+class EMA(MarketFeature, NodeFeature):
     def __init__(self, params):
         super().__init__(params)
         self.alpha = float(self.alpha)
@@ -66,9 +68,18 @@ class EMA(MarketFeature):
 
 
 @register
-class BasicVolatility(MarketFeature):
+class Volatility(MarketFeature, NodeFeature):
     def __init__(self, params):
         super().__init__(params)
 
     def evaluate(self, prices: np.array, _volumes: np.array):
         return np.std(prices, axis=0)
+
+
+@register
+class LogReturns(MarketFeature, NodeFeature):
+    def __init__(self, params):
+        super().__init__(params)
+
+    def evaluate(self, prices: np.array, _volumes: np.array):
+        return np.diff(np.log(prices), axis=0)

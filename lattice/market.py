@@ -90,13 +90,11 @@ class LocalMarket(Market):
 
 
 class FTXMarket(Market):
-
-    client = FtxClient(
-        api_key=os.environ["FTX_DATA_KEY"], api_secret=os.environ["FTX_DATA_SECRET"]
-    )
-
     def __init__(self, config) -> None:
         super().__init__(config)
+        self.client = FtxClient(
+            api_key=os.environ["FTX_DATA_KEY"], api_secret=os.environ["FTX_DATA_SECRET"]
+        )
         self.dt = datetime.timedelta(seconds=self.lag * self.resolution).total_seconds()
 
     def get_lagged_market_data(self, market: str) -> pl.DataFrame:
@@ -133,3 +131,21 @@ class FTXMarket(Market):
         current_time = int(time.time())
         curent_prices = dict(zip(self.markets, prices[-1]))
         return done, current_time, curent_prices, features
+
+
+class GNNMarketMixin:
+    def compute_features(self, prices: np.ndarray, volumes: np.ndarray) -> np.ndarray:
+        features: Dict[str : np.ndarray] = [
+            f.evaluate(prices, volumes) for f in self.feature_set
+        ]
+        return features
+
+
+class LocalGNNMarket(LocalMarket, GNNMarketMixin):
+    def __init__(self, config) -> None:
+        super().__init__(config)
+
+
+class FTXGNNMarket(FTXMarket, GNNMarketMixin):
+    def __init__(self, config) -> None:
+        super().__init__(config)
