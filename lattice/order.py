@@ -85,11 +85,6 @@ class LocalTriggerOrder(Order):
 
 
 class FTXOrder(Order):
-
-    client = FtxClient(
-        api_key=os.environ["FTX_TRADE_KEY"], api_secret=os.environ["FTX_TRADE_SECRET"]
-    )
-
     def __init__(
         self,
         market: str,
@@ -98,6 +93,10 @@ class FTXOrder(Order):
         open_price: float,
     ):
         super().__init__(market, side, size, open_price)
+        client = FtxClient(
+            api_key=os.environ["FTX_TRADE_KEY"],
+            api_secret=os.environ["FTX_TRADE_SECRET"],
+        )
 
     def status(self):
         return self.client.get_order_status(self.id)

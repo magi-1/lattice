@@ -67,14 +67,11 @@ class LocalWallet(Wallet):
 
 
 class FTXWallet(Wallet):
-
-    client = FtxClient(
-        api_key=os.environ["FTX_DATA_KEY"], api_secret=os.environ["FTX_DATA_SECRET"]
-    )
-
     def __init__(self, config):
         super().__init__(config)
-
+        client = FtxClient(
+            api_key=os.environ["FTX_DATA_KEY"], api_secret=os.environ["FTX_DATA_SECRET"]
+        )
         self.balances = self.pull_balances()
 
     def pull_balances(self):
