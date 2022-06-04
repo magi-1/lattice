@@ -1,20 +1,12 @@
-from lattice.market import FTXMarket
+from lattice.market import LocalMarket
 from lattice.config import read_config
 from lattice.order import FTXMarketOrder
 from lattice.features import feature_registry
-
-"""order = FTXMarketOrder(
-    market='BTC/USD',
-    size=0.0062,
-    side='buy'
-)
-order.place()"""
+from lattice.models import gnn
 
 
-print(feature_registry)
-
-config = read_config("live_strategy")
-market = FTXMarket(config=config["market"])
-g = market.get_state()
-
-print(g)
+config = read_config("local_gnn")
+market = LocalMarket(config=config["market"])
+_, _, _, features = market.get_state()
+graph = gnn.construct_graph(features)
+print(graph)

@@ -1,0 +1,26 @@
+market:
+    dataset: '365_days_60_seconds'
+    lag: 15
+    window: 
+        - '2022-02-01'
+        - '2022-03-01'
+    markets: 
+        - 'BTC_USD'
+        - 'ETH_USD'
+        
+    features:
+        EMA:
+            alpha: 1.2
+            N: 10
+        Volatility:
+        LogReturns:
+            
+wallet:
+    balances:
+        USD: 100000
+
+broker:
+    fee: 0.0018
+
+investor:
+    class: "GNNInvestor"

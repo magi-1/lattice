@@ -1,6 +1,6 @@
 import functools
 import numpy as np
-from typing import NewType, TypeVar
+from typing import NewType, TypeVar, Dict, Union
 
 
 """
@@ -13,15 +13,6 @@ feature_registry = {}
 def register(cls):
     feature_registry[cls.__name__] = cls
     return cls
-
-
-"""
-Custom feature and hyperparameter types
-"""
-
-NodeFeature = TypeVar("NodeFeature")
-EdgeFeature = TypeVar("EdgeFeature")
-PositiveScalar = NewType("PositiveScalar", float)
 
 
 """
@@ -44,6 +35,23 @@ class OrderBookFeature:
     def evaluate(self, df):
         pass
 
+
+"""
+Custom feature and hyperparameter types
+"""
+
+PositiveScalar = NewType("PositiveScalar", float)
+
+
+class NodeFeature:
+    pass
+
+
+class EdgeFeature:
+    pass
+
+
+FeatureDict = Dict[str, Union[NodeFeature, EdgeFeature]]
 
 """
 Market features

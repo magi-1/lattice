@@ -73,23 +73,18 @@ class BernoulliInvestor(Investor):
             return self.wallet.total_value
 
 
-"""class AgentInvestor(Investor):
-    
-    
-
+class GNNInvestor(Investor):
     def __init__(self, wallet, market, broker, config) -> None:
         super().__init__(wallet, market, broker, config)
-        
+
     def evaluate_market(self):
-        
+
         # Check state of the market
         done, time, prices, market_features = self.market.get_state()
-        global_features = self.wallet.featurize() # TODO
-        # edge_features = ? How to pack this up with the get_state() call?
-        # probably just a dictionary that has always node features but edge features
-        # are optional and contingent on the strategy? Different strategies require
-        # different feature set STRUCTURE
-    
+        graph_t = gnn.construct_graph(
+            features=market_features, global_features=self.wallet.balances
+        )
+
         output = self.model(market_features, global_features)
 
         orders = [None]
@@ -98,25 +93,24 @@ class BernoulliInvestor(Investor):
             if action:
                 order = self.broker.market_order(
                     market=market_name,
-                    side='BUY',
+                    side="BUY",
                     size=0.01,
                     open_price=prices[market_name],
-                    open_time=time
+                    open_time=time,
                 )
             else:
                 order = self.broker.market_order(
                     market=market_name,
-                    side='BUY',
+                    side="BUY",
                     size=0.01,
                     open_price=prices[market_name],
-                    open_time=time
+                    open_time=time,
                 )
             orders.append(order)
-        
+
         self.submit_orders([order], prices)
 
         # Expose data (needs to be SAR data for RL purposes later down the line :D)
         if not done:
             # need to return all the features, actions, and total wallet value!!
             return self.wallet.total_value
-"""

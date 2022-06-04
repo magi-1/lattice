@@ -166,6 +166,17 @@ version = "0.3.4"
 summary = "Distribution utilities"
 
 [[package]]
+name = "dm-haiku"
+version = "0.0.6"
+summary = "Haiku is a library for building neural networks in JAX."
+dependencies = [
+    "absl-py>=0.7.1",
+    "jmp>=0.0.2",
+    "numpy>=1.18.0",
+    "tabulate>=0.8.9",
+]
+
+[[package]]
 name = "dm-tree"
 version = "0.1.7"
 summary = "Tree is a library for working with nested data structures."
@@ -331,6 +342,26 @@ requires_python = ">=3.7"
 summary = "A very fast and expressive template engine."
 dependencies = [
     "MarkupSafe>=2.0",
+]
+
+[[package]]
+name = "jmp"
+version = "0.0.2"
+summary = "JMP is a Mixed Precision library for JAX."
+dependencies = [
+    "numpy>=1.19.5",
+]
+
+[[package]]
+name = "jraph"
+version = "0.0.2.dev0"
+requires_python = ">=3.6"
+summary = "Jraph: A library for Graph Neural Networks in Jax"
+dependencies = [
+    "jax>=0.1.55",
+    "jaxlib>=0.1.37",
+    "numpy>=1.18.0",
+    "python-version>=\"3.6\"",
 ]
 
 [[package]]
@@ -720,6 +751,11 @@ requires_python = ">=3.5"
 summary = "Read key-value pairs from a .env file and set them as environment variables"
 
 [[package]]
+name = "python-version"
+version = "0.0.2"
+summary = "Provides a simple utility for checking the python version."
+
+[[package]]
 name = "pytz"
 version = "2022.1"
 summary = "World timezone definitions, modern and historical"
@@ -826,6 +862,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "tabulate"
+version = "0.8.9"
+summary = "Pretty-print tabular data"
+
+[[package]]
 name = "tenacity"
 version = "8.0.1"
 requires_python = ">=3.6"
@@ -926,7 +967,7 @@ summary = "Backport of pathlib-compatible object wrapper for zip files"
 
 [metadata]
 lock_version = "3.1"
-content_hash = "sha256:746c9495bd67ec8e7cb20d280bd24143b9bef9429b414bd7c21af7fbd434b8f2"
+content_hash = "sha256:aa97aaacbaf777bfff94b32c1c3be9ce343ad7a841219527d5a9db7142e53241"
 
 [metadata.files]
 "absl-py 1.0.0" = [
@@ -1104,6 +1145,10 @@ content_hash = "sha256:746c9495bd67ec8e7cb20d280bd24143b9bef9429b414bd7c21af7fbd
     {file = "distlib-0.3.4-py2.py3-none-any.whl", hash = "sha256:6564fe0a8f51e734df6333d08b8b94d4ea8ee6b99b5ed50613f731fd4089f34b"},
     {file = "distlib-0.3.4.zip", hash = "sha256:e4b58818180336dc9c529bfb9a0b58728ffc09ad92027a3f30b7cd91e3458579"},
 ]
+"dm-haiku 0.0.6" = [
+    {file = "dm_haiku-0.0.6-py3-none-any.whl", hash = "sha256:a1c2d3d7ece05a33bc1c2233f0ffe72d5f714b7e1ec6264fb677b3ad1bc332ef"},
+    {file = "dm-haiku-0.0.6.tar.gz", hash = "sha256:f95a9dac0aa002b5c5089c8090399f3ea276f93b3072892616c87175b2e65298"},
+]
 "dm-tree 0.1.7" = [
     {file = "dm_tree-0.1.7-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3fae437135b6cbbdd51e96488a35e78c3617defa0b65265e7e8752d506f933fd"},
     {file = "dm_tree-0.1.7-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d377bd621b485db42c4aeea0eabbd8f6274b89a9c338c2c1bf69a40c3b86a1fd"},
@@ -1203,6 +1248,14 @@ content_hash = "sha256:746c9495bd67ec8e7cb20d280bd24143b9bef9429b414bd7c21af7fbd
 "jinja2 3.1.1" = [
     {file = "Jinja2-3.1.1-py3-none-any.whl", hash = "sha256:539835f51a74a69f41b848a9645dbdc35b4f20a3b601e2d9a7e22947b15ff119"},
     {file = "Jinja2-3.1.1.tar.gz", hash = "sha256:640bed4bb501cbd17194b3cace1dc2126f5b619cf068a726b98192a0fde74ae9"},
+]
+"jmp 0.0.2" = [
+    {file = "jmp-0.0.2-py3-none-any.whl", hash = "sha256:48f94b2ba0c9db759851a23cce2fbfa622e954c3c811651bc11b196246f02527"},
+    {file = "jmp-0.0.2.tar.gz", hash = "sha256:fdb5cec0d10aab4116c2770f24b2adf4f503fcfbb96ce8ef583e1879bdbf1b9b"},
+]
+"jraph 0.0.2.dev0" = [
+    {file = "jraph-0.0.2.dev0-py3-none-any.whl", hash = "sha256:eb6cd33ef2b07bdd57e2030da9faeeaec422415631f61812910ba673cb8e9c3d"},
+    {file = "jraph-0.0.2.dev0.tar.gz", hash = "sha256:f8ea56988f973d73f0e6ffeff03a8f98b11d364562f1de907c0f0244d865cd48"},
 ]
 "jsonschema 4.4.0" = [
     {file = "jsonschema-4.4.0-py3-none-any.whl", hash = "sha256:77281a1f71684953ee8b3d488371b162419767973789272434bbc3f29d9c8823"},
@@ -1654,6 +1707,10 @@ content_hash = "sha256:746c9495bd67ec8e7cb20d280bd24143b9bef9429b414bd7c21af7fbd
     {file = "python_dotenv-0.20.0-py3-none-any.whl", hash = "sha256:d92a187be61fe482e4fd675b6d52200e7be63a12b724abbf931a40ce4fa92938"},
     {file = "python-dotenv-0.20.0.tar.gz", hash = "sha256:b7e3b04a59693c42c36f9ab1cc2acc46fa5df8c78e178fc33a8d4cd05c8d498f"},
 ]
+"python-version 0.0.2" = [
+    {file = "python_version-0.0.2-py2.py3-none-any.whl", hash = "sha256:2c7429f3375cee19873892e5db4d10d2b42172d8851a8bb5111729e028470580"},
+    {file = "python_version-0.0.2.tar.gz", hash = "sha256:5c16de57c7f2d614621cf468e8f5a20bb6b3cec665c9c7f5e9f9f000bf04fe67"},
+]
 "pytz 2022.1" = [
     {file = "pytz-2022.1-py2.py3-none-any.whl", hash = "sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c"},
     {file = "pytz-2022.1.tar.gz", hash = "sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7"},
@@ -1814,6 +1871,10 @@ content_hash = "sha256:746c9495bd67ec8e7cb20d280bd24143b9bef9429b414bd7c21af7fbd
 ]
 "strictyaml 1.6.1" = [
     {file = "strictyaml-1.6.1.tar.gz", hash = "sha256:688be16ee5d1a2f94aa4abdc6d881e8e254d173d724ac88725955fe66bdb63d4"},
+]
+"tabulate 0.8.9" = [
+    {file = "tabulate-0.8.9-py3-none-any.whl", hash = "sha256:d7c013fe7abbc5e491394e10fa845f8f32fe54f8dc60c6622c6cf482d25d47e4"},
+    {file = "tabulate-0.8.9.tar.gz", hash = "sha256:eb1d13f25760052e8931f2ef80aaf6045a6cceb47514db8beab24cded16f13a7"},
 ]
 "tenacity 8.0.1" = [
     {file = "tenacity-8.0.1-py3-none-any.whl", hash = "sha256:f78f4ea81b0fabc06728c11dc2a8c01277bfc5181b321a4770471902e3eb844a"},

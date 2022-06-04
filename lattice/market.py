@@ -6,6 +6,7 @@ from lattice.wallet import Wallet
 import lattice.paths as paths
 
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from dotenv import load_dotenv
 from typing import Dict
 import polars as pl
@@ -24,14 +25,18 @@ class Market(ABC):
         self.__dict__.update(config)
         self.feature_set = self.init_features()
 
-    def init_features(self) -> None:
-        return [
-            feature_registry[name](params) for name, params in self.features.items()
-        ]
+    def init_features(self) -> OrderedDict:
+        return OrderedDict(
+            {
+                name: feature_registry[name](params)
+                for name, params in self.features.items()
+            }
+        )
 
-    def compute_features(self, prices: np.ndarray, volumes: np.ndarray) -> np.ndarray:
-        features = [f.evaluate(prices, volumes) for f in self.feature_set]
-        return features
+    def compute_features(self, prices: np.ndarray, volumes: np.ndarray) -> OrderedDict:
+        return OrderedDict(
+            {f: f.evaluate(prices, volumes) for name, f in self.feature_set.items()}
+        )
 
     def pivot(self, df: pl.DataFrame, column: str) -> np.ndarray:
         return (
@@ -79,8 +84,8 @@ class LocalMarket(Market):
 
         price_window = self.prices[start_index:end_index]
         volume_window = self.volumes[start_index:end_index]
-
         features = self.compute_features(price_window, volume_window)
+
         # Simulation state
         done = False
         if self.t >= self.T - 1:
@@ -131,21 +136,3 @@ class FTXMarket(Market):
         current_time = int(time.time())
         curent_prices = dict(zip(self.markets, prices[-1]))
         return done, current_time, curent_prices, features
-
-
-class GNNMarketMixin:
-    def compute_features(self, prices: np.ndarray, volumes: np.ndarray) -> np.ndarray:
-        features: Dict[str : np.ndarray] = [
-            f.evaluate(prices, volumes) for f in self.feature_set
-        ]
-        return features
-
-
-class LocalGNNMarket(LocalMarket, GNNMarketMixin):
-    def __init__(self, config) -> None:
-        super().__init__(config)
-
-
-class FTXGNNMarket(FTXMarket, GNNMarketMixin):
-    def __init__(self, config) -> None:
-        super().__init__(config)

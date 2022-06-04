@@ -8,7 +8,10 @@ clear_sims:
 	@rm -rf $(CURDIR)/data/report
 
 backtest: clear_sims
-	@pdm run python lattice/simulations/backtest.py $(CONFIG) $(SIMS)
+	@pdm run python lattice/simulation/backtest.py $(CONFIG) $(SIMS)
 
 report:
 	@pdm run python $(CURDIR)/lattice/utils/report.py
+
+black:
+	@pdm run nox -rs black
