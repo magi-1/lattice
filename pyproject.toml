@@ -22,6 +22,7 @@ dependencies = [
     "nox>=2022.1.7",
     "jraph>=0.0.2.dev0",
     "dm-haiku>=0.0.6",
+    "optax>=0.1.2",
 ]
 requires-python = ">=3.8"
 license = {text = "MIT"}

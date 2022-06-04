@@ -81,7 +81,8 @@ class Volatility(MarketFeature, NodeFeature):
         super().__init__(params)
 
     def evaluate(self, prices: np.array, _volumes: np.array):
-        return np.std(prices, axis=0)
+        std = np.std(prices, axis=0)
+        return np.expand_dims(std, axis=0)
 
 
 @register
@@ -91,3 +92,13 @@ class LogReturns(MarketFeature, NodeFeature):
 
     def evaluate(self, prices: np.array, _volumes: np.array):
         return np.diff(np.log(prices), axis=0)
+
+
+@register
+class Correlation(MarketFeature, EdgeFeature):
+    def __init__(self, params):
+        super().__init__(params)
+
+    def evaluate(self, prices: np.array, _volumes: np.array):
+        log_returns = np.diff(np.log(prices), axis=0)
+        return np.corrcoef(log_returns, rowvar=False)

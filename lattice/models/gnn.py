@@ -2,14 +2,24 @@ from lattice.features import FeatureDict, NodeFeature, EdgeFeature
 
 import jax
 import jraph
+import haiku as hk
+
 import numpy as np
 from typing import Union
 
 
-def parse_features(
-    features: FeatureDict, feature_type: Union[NodeFeature, EdgeFeature]
-):
-    return [v.T for feat, v in features.items() if isinstance(feat, feature_type)]
+def parse_node_features(features: FeatureDict) -> Union[np.ndarray, None]:
+    values = [v for feat, v in features.items() if isinstance(feat, NodeFeature)]
+    if values:
+        return np.concatenate(values).T
+
+
+def parse_edge_features(features: FeatureDict) -> Union[np.ndarray, None]:
+    values = [
+        v.flatten() for feat, v in features.items() if isinstance(feat, EdgeFeature)
+    ]
+    if values:
+        return np.array(values).T
 
 
 def construct_graph(
@@ -17,11 +27,11 @@ def construct_graph(
 ) -> jraph.GraphsTuple:
 
     # graph features
-    node_features = parse_features(features, NodeFeature)
-    edge_features = parse_features(features, EdgeFeature)
+    node_features = parse_node_features(features)
+    edge_features = parse_edge_features(features)
 
     # graph structure
-    n_nodes = len(node_features[0])
+    n_nodes = node_features.shape[0]
     n_edges = int(0.5 * n_nodes * (n_nodes + 1))
     edges = [(i, j) for i in range(n_nodes) for j in range(n_nodes)]
 
@@ -66,13 +76,11 @@ def network_definition(
         return net(features)
 
     for _ in range(message_pasing_steps):
-        gn = jraph.InteractionNetwork(
+        gn = jraph.GraphNetwork(
             update_edge_fn=update_fn,
             update_node_fn=update_fn,
             update_global_fn=update_fn,
-            include_sent_messages_in_node_update=True,
         )
         graph = gn(graph)
 
-    # Can generalize this later to allocation categories
     return hk.Linear(1)(graph.nodes)

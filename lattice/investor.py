@@ -81,7 +81,7 @@ class GNNInvestor(Investor):
 
         # Check state of the market
         done, time, prices, market_features = self.market.get_state()
-        graph_t = gnn.construct_graph(
+        graph = gnn.construct_graph(
             features=market_features, global_features=self.wallet.balances
         )
 
