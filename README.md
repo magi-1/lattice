@@ -16,6 +16,7 @@ First you must [set up pdm](https://pdm.fming.dev/) after which you can clone th
 - [ ] Wallet config, "balances" paramter no longer optional but creates a ftx subaccount to deploy the strategy on. This would make a subaccount and transfer money from main wallet to the sub account.
 - [ ] Add tests for all the feature classes to make sure that the have the correct output dimention (nodes, k)
 - [ ] Reserve backtesting for inference, not training.
+- [ ] Investors need to have training vs inference modes.
 
 ```yaml
 wallet:
