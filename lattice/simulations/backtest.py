@@ -3,7 +3,7 @@ from lattice.market import LocalMarket
 from lattice.wallet import LocalWallet
 from lattice.config import read_config
 from lattice.investor import Investor, get_investor
-import lattice.utils.plotting as plot
+from lattice.utils import logging
 import lattice.paths as paths
 
 import multiprocessing as mp
@@ -27,32 +27,7 @@ def run_backtest(investor: Investor, batch_id=None) -> None:
         pass
 
     # Logging data
-    log_results(investor, batch_id=batch_id)
-
-
-def log_results(investor: Investor, batch_id=None):
-    # arg: run_id=None maybe add later if needed for RL
-    """
-    Standardize and build upon this
-    """
-
-    # Setting out directory
-    save_path = paths.data / "sim_out"
-    if batch_id != None:
-        save_path /= f"sim_{batch_id}"
-
-    try:
-        save_path.mkdir(parents=True, exist_ok=False)
-    except:
-        msg = "Sim data already exists. Try running 'make clear_sims'"
-        raise OSError(msg)
-
-    # Writing data
-    history = investor.wallet.get_history()
-    history.to_parquet(save_path / "wallet_history.parquet", index=False)
-
-    # Saving visualizations
-    plot.visualize_backtest(history, save_path)
+    logging.save_results(investor, name=batch_id)
 
 
 if __name__ == "__main__":

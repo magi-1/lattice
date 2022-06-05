@@ -1,5 +1,5 @@
 .pdm.toml
 __pypackages__/
-notebooks/
+weights/
 *.pyc
 .vscode/

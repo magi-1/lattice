@@ -18,3 +18,4 @@ params = network.init(jax.random.PRNGKey(42), graph)
 out = network.apply(params, graph)
 
 print(out)
+print(jax.nn.softmax(out, axis=1))

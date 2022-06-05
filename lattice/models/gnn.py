@@ -83,4 +83,4 @@ def network_definition(
         )
         graph = gn(graph)
 
-    return hk.Linear(1)(graph.nodes)
+    return hk.Linear(3)(graph.nodes)

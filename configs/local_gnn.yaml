@@ -25,3 +25,5 @@ broker:
 
 investor:
     class: "GNNInvestor"
+    weights: test_weights
+    seed: 777
