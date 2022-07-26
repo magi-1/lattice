@@ -16,7 +16,6 @@ class ExperienceBuffer:
         self.actions.append(actions)
 
     def reward_to_go(self, rews, num_markets):
-        # TODO: https://ai.stackexchange.com/questions/10082/suitable-reward-function-for-trading-buy-and-sell-orders
         # credits: spinningup.openai.com
         n = len(rews)
         rtgs = np.zeros_like(rews)
