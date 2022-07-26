@@ -3,7 +3,7 @@ from lattice.market import LocalMarket
 from lattice.wallet import LocalWallet
 from lattice.config import read_config
 from lattice.investor import Investor, get_investor
-from lattice.utils import logging
+from lattice.utils import log
 import lattice.paths as paths
 
 import os
@@ -27,11 +27,11 @@ def run_episode(investor: Investor, batch_id=None) -> list:
     while experience := investor.evaluate_market():
         if not type(experience) == bool:
             break
-    # logging.save_results(investor, name=batch_id)
+    # log.save_results(investor, name=batch_id)
     return experience
 
 
-def run_episodes(investor: Investor) -> List[logging.ExperienceBuffer]:
+def run_episodes(investor: Investor) -> List[log.ExperienceBuffer]:
     with mp.Pool() as pool:
         results = []
         for i in range(args["sims"]):
