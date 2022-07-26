@@ -46,6 +46,7 @@ def read_config(config_name):
                 Str(),
                 Any(),
             ),
+            # TODO: Specify the investor config!!
             "investor": Any(),
         }
     )

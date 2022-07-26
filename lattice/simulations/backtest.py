@@ -20,14 +20,16 @@ def run_backtest(investor: Investor, batch_id=None) -> None:
     """
     Takes in a configured investor and executes trading scenario.
     """
-    np.random.seed(os.getpid())
+    # NOTE: for concurrent backtesting, cannot do with jax at the moment
+    #np.random.seed(os.getpid())
 
     # Executing backtest
     while total_value := investor.evaluate_market():
         pass
-
+    
     # Logging data
     logging.save_results(investor, name=batch_id)
+    investor.reset()
 
 
 if __name__ == "__main__":
@@ -48,20 +50,8 @@ if __name__ == "__main__":
     broker = LocalBroker(config["broker"])
     investor = get_investor(wallet, market, broker, config["investor"])
 
-    with mp.Pool() as pool:
-        results = []
-        for i in range(args["sims"]):
-            results.append(
-                pool.apply_async(
-                    run_backtest,
-                    args=(
-                        investor,
-                        i,
-                    ),
-                )
+    results = []
+    for i in range(args["sims"]):
+        results.append(
+            run_backtest(investor, i)
             )
-        pool.close()
-        pool.join()
-
-    for r in results:
-        r.get()

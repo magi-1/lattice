@@ -14,7 +14,10 @@ class Broker(ABC):
 
     def __init__(self, config: BrokerConfig):
         self.__dict__.update(config)
-        self.orders = dict()
+        self.orders = {}
+    
+    def reset(self):
+        self.orders = {}
 
     def place_order(self, order: Order):
         if order:

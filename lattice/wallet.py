@@ -6,6 +6,7 @@ from typing import List, Union, Dict
 from abc import ABC, abstractmethod
 from dotenv import load_dotenv
 import pandas as pd
+import copy
 import os
 
 load_dotenv()
@@ -14,6 +15,12 @@ load_dotenv()
 class Wallet(ABC):
     def __init__(self, config: WalletConfig):
         self.__dict__.update(config)
+        self.default_balances = self.balances
+        self.total_value = 0.01
+        self.history = []
+
+    def reset(self):
+        self.balances = copy.deepcopy(self.default_balances) 
         self.total_value = 0.01
         self.history = []
 
@@ -59,6 +66,10 @@ class Wallet(ABC):
 
     def get_history(self):
         return pd.DataFrame(self.history)
+
+    def featurize(self):
+        # TODO: For GNN global feature
+        pass
 
 
 class LocalWallet(Wallet):

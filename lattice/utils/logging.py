@@ -1,17 +1,35 @@
 from lattice.utils import plotting
 import lattice.paths as paths
+import numpy as np
+import jax
+import jraph
 
 
 class ExperienceBuffer:
     def __init__(self):
-        self.log = {}
+        self.graphs = []
+        self.actions = []
         self.reward = None
 
-    def push(self, time, state, action):
-        self.log[time] = (state, action)
+    def push(self, graph, actions):
+        self.graphs.append(graph)
+        self.actions.append(actions)
 
-    def assign_reward(self, reward_data):
-        self.reward_data = reward_data
+    def reward_to_go(self, rews, num_markets):
+        # TODO: https://ai.stackexchange.com/questions/10082/suitable-reward-function-for-trading-buy-and-sell-orders
+        # credits: spinningup.openai.com
+        n = len(rews)
+        rtgs = np.zeros_like(rews)
+        for i in reversed(range(n)):
+            rtgs[i] = rews[i] + (rtgs[i + 1] if i + 1 < n else 0)
+
+        rtgs = (rtgs-rtgs.mean())/rtgs.std()
+        self.reward = np.append(np.repeat(rtgs, num_markets), np.zeros(num_markets))
+
+    def state_action_reward(self):
+        graph_batch = jraph.batch(self.graphs)
+        actions = np.concatenate(self.actions)
+        return graph_batch, actions, self.reward
 
 
 def save_results(investor, name=None):

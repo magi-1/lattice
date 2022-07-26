@@ -45,6 +45,10 @@ class Market(ABC):
             .to_numpy()
         )
 
+    @property
+    def num_markets(self):
+        return len(self.markets)
+        
     @abstractmethod
     def get_state(self):
         pass
@@ -54,6 +58,9 @@ class LocalMarket(Market):
     def __init__(self, config) -> None:
         super().__init__(config)
         self.prices, self.volumes = self.load_data()
+
+    def reset(self):
+        self.t = self.lag
 
     def load_data(self):
         data_dir = paths.data / "historical" / self.dataset
@@ -88,7 +95,7 @@ class LocalMarket(Market):
 
         # Simulation state
         done = False
-        if self.t >= self.T - 1:
+        if self.t >= self.T - 2:
             done = True
         self.t += 1
         return done, self.t, current_prices, features

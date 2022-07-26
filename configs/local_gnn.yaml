@@ -25,5 +25,7 @@ broker:
 
 investor:
     class: "GNNInvestor"
-    weights: test_weights
+    name: test_model
     seed: 777
+    train: True
+

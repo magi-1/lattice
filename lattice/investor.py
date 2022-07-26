@@ -3,12 +3,16 @@ from lattice.market import *
 from lattice.broker import *
 from lattice.order import *
 from lattice.utils import logging
+from lattice.models import gnn
 from lattice.config import InvestorConfig
 
-from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import List
+import jax
+import jraph
 import numpy as np
+import haiku as hk
+from typing import List
+from pathlib import Path
+from abc import ABC, abstractmethod
 
 
 def get_investor(wallet, market, broker, config):
@@ -27,6 +31,11 @@ class Investor:
         self.wallet = wallet
         self.market = market
         self.broker = broker
+
+    def reset(self):
+        self.market.reset()
+        self.wallet.reset()
+        self.broker.reset()
 
     def submit_orders(self, orders: List[Order], prices: Dict[str, float]) -> None:
         for order in orders:
@@ -62,24 +71,22 @@ class BernoulliInvestor(Investor):
             order = self.broker.market_order(
                 market=market_name,
                 side=np.random.choice(["BUY", "SELL"], p=self.p),
-                size=0.01,
+                size=0.1,
                 open_price=prices[market_name],
                 open_time=time,
             )
         else:
             order = None
         self.submit_orders([order], prices)
-
-        if not done:
-            return True
+        return not done
 
 
 class GNNInvestor(Investor):
-    def __init__(self, wallet, market, broker, config, train=False) -> None:
+    def __init__(self, wallet, market, broker, config) -> None:
         super().__init__(wallet, market, broker, config)
+        self.seed = int(self.seed)
         self.weight_dir = paths.weights / self.name
         self.network = hk.without_apply_rng(hk.transform(gnn.network_definition))
-        self.train = train
         self.initialized = False
         self.action_map = {0: "HOLD", 1: "BUY", 2: "SELL"}
 
@@ -87,35 +94,44 @@ class GNNInvestor(Investor):
             self.experience = logging.ExperienceBuffer()
 
     def set_params(self, graph: jraph.GraphsTuple) -> None:
-        if Path(self.weight_dir).exists():
-            self.params = jax.numpy.load(self.weight_dir)
-        else:
-            self.params = network.init(jax.random.PRNGKey(self.seed), graph)
-            jax.numpy.save(self.weight_dir, self.params)
-        self.initialized = True
+        if not self.initialized:
+            if self.weight_dir.exists():
+                self.params = jax.numpy.load(self.weight_dir)
+            else:
+                self.params = self.network.init(jax.random.PRNGKey(self.seed), graph)
+                self.weight_dir.parent.mkdir(exist_ok=True)
+                self.save_params()
+            self.initialized = True
+
+    def save_params(self):
+        jax.numpy.save(self.weight_dir, self.params)
 
     def get_actions(self, features, global_features) -> List[str]:
         graph = gnn.construct_graph(features=features, global_features=global_features)
-        self.initialize_params(graph)
+        self.set_params(graph)
+        self.graph = graph
         logits = self.network.apply(self.params, graph)
         actions = jax.random.categorical(
             key=jax.random.PRNGKey(self.seed), logits=logits
         )
-        return [self.action_map[index] for index in actions]
+        return actions.tolist()
 
     def evaluate_market(self) -> Union[bool, logging.ExperienceBuffer]:
         # Check state of the market
         done, time, prices, market_features = self.market.get_state()
+        print(time)
 
         # Calling GNN model
-        outputs = self.get_actions(
-            features=market_features, global_features=self.wallet.balances.values()
+        # TODO: Make these the proportions of cash and other tradable assets
+        wallet_features = jax.numpy.array([[0.0, 0.0, 0.0]]) 
+        actions = self.get_actions(
+            features=market_features, global_features=wallet_features
         )
 
         # Creating orders
         orders = [None]
         for i, market_name in enumerate(self.market.markets):
-            action = outputs[i]
+            action = self.action_map[actions[i]]
             if action == "BUY":
                 order = self.broker.market_order(
                     market=market_name,
@@ -136,11 +152,12 @@ class GNNInvestor(Investor):
         self.submit_orders([order], prices)
 
         if self.train:
-            self.experience.push(time=time, graph=graph, outputs=outputs)
+            self.experience.push(self.graph, actions)
 
-        if not done and self.train:
-            r = self.wallet.get_history()["total_value"].values
-            self.experience.set_reward(r)
-            return self.experience
+            if done:
+                history = self.wallet.get_history()
+                wallet_values = history["total_value"].values
+                self.experience.reward_to_go(wallet_values, self.market.num_markets)
+                return self.experience.state_action_reward()
 
-        return True
+        return not done
